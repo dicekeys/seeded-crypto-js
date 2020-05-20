@@ -4,6 +4,9 @@
 #include "binding-helpers.hpp"
 #include "binding-macros.hpp"
 
+// export class PackagedSealedMessage extends SealedCryptoSerializableObject {
+
+// constructor(ciphertext: TypedByteArray, derivationOptionsJson: string, unsealingInstructions: string)
 inline PackagedSealedMessage* constructPackageSealedMessage(
   emscripten::val ciphertext,
   const std::string& derivationOptionsJson,
@@ -16,10 +19,11 @@ EMSCRIPTEN_BINDINGS(PackagedSealedMessage) {
   
   emscripten::class_<PackagedSealedMessage>("PackagedSealedMessage")
     AddSerializable(PackagedSealedMessage)
+    // constructor(ciphertext: TypedByteArray, derivationOptionsJson: string, unsealingInstructions: string)
     .constructor(&constructPackageSealedMessage, emscripten::allow_raw_pointers())
     // readonly ciphertext: Uint8Array;
     .property<emscripten::val>("ciphertext", [](const PackagedSealedMessage &psm){
-      return toJsUint8Array(psm.ciphertext);
+        return toJsUint8Array(psm.ciphertext);
     })
     // readonly derivationOptionsJson: string;
     .property<std::string>("derivationOptionsJson", [](const PackagedSealedMessage &psm){
@@ -32,3 +36,4 @@ EMSCRIPTEN_BINDINGS(PackagedSealedMessage) {
     ;
 }
 
+// }
