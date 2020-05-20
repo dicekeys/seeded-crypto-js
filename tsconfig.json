@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "target": "esnext",
+      "noImplicitAny": true,
+      "moduleResolution": "node",
+      "rootDirs": ["src"],
+      "baseUrl": "./src",
+      "paths": {
+        "*" : [
+            "./node_modules/@types",
+            "src/@types/*",
+            "src",
+            "tests"
+        ],
+        "~*": ["./src/*"]
+      },
+      "sourceMap": true,
+      "outDir": "dist"
+    },
+    "include": ["src/**/*"],
+    "lib": ["node", "es6", "webworker"]
+  }
