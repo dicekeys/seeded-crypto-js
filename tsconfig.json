@@ -13,7 +13,7 @@
             "./node_modules/@types",
             "src/@types/*",
             "src",
-            "tests"
+            "src/tests"
         ],
         "~*": ["./src/*"]
       },

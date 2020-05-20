@@ -3,6 +3,8 @@
 node_modules/
 dist/
 build/
+coverage/
+yarn-error.log
 
 # Output of 'npm pack'
 *.tgz

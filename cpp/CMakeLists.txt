@@ -57,6 +57,7 @@ set_target_properties(
     ${SEEDED_CRYPTO_PROJECT_NAME}
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
+    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
 )
 
 target_link_options(

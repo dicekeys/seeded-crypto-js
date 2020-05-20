@@ -1,0 +1,21 @@
+{
+    "verbose": true,
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/tests/**/*.+(ts|tsx|js)",
+      "**/?(*.)+(spec|test).+(ts|tsx|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "moduleDirectories": ["node_modules", "src"],
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/seeded-crypto-js.*",
+      "/src/should-be-modules/*"
+    ],
+    "testEnvironment": "jest-environment-node"
+  }

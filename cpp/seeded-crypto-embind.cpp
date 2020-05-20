@@ -18,6 +18,11 @@ std::vector<T> vectorFromJsTypedNumericArray(const val &typedArray)
   return vec;
 }
 
+template<typename T>
+inline std::string toJsonSimple(T jsonSerializable) {
+  return jsonSerializable.toJson();
+}
+
 val arrayToJavaScriptUint8Array(
   const unsigned char* dataPtr,
   const size_t length
@@ -27,17 +32,6 @@ val arrayToJavaScriptUint8Array(
   uint8Array.call<void>("set", bufferAsTypedMemoryView);
   return uint8Array;
 }  
-
-#define AddSerializable(CLASSTYPE) \
-  .class_function("fromSerializedBinaryForm", &CLASSTYPE::fromSerializedBinaryForm) \
-  .function("toSerializedBinaryForm", &CLASSTYPE::toSerializedBinaryForm) \
-  .class_function("fromJson", &CLASSTYPE::fromJson) \
-  .function("toJson", &CLASSTYPE::toJson) \
-
-#define AddDerivablesSerliazable(CLASSTYPE)     AddSerializable(CLASSTYPE) \
-  .class_function("deriveFromSeed", &CLASSTYPE::deriveFromSeed)
-
-
 inline val sodiumBufferToJavaScriptUint8Array(const SodiumBuffer &sodiumBuffer) {
   return arrayToJavaScriptUint8Array(sodiumBuffer.data, sodiumBuffer.length);
 }
@@ -68,7 +62,7 @@ inline val symmetricKeyGetKeyBytes(const SymmetricKey &symmetricKey) {
   return sodiumBufferToJavaScriptUint8Array(symmetricKey.keyBytes);
 }
 
-inline val staticUnseal(
+inline val staticSymmetricUnseal(
   const PackagedSealedMessage& packagedSealedMessage,
   const std::string& derivationOptions
 ) {
@@ -86,6 +80,21 @@ inline PackagedSealedMessage* constructPackageSealedMessage(
       vectorFromJsTypedNumericArray<unsigned char>(ciphertext), derivationOptionsJson, unsealingInstructions);
 }
 
+
+
+
+#define AddSerializable(CLASSTYPE) \
+  .class_function("fromSerializedBinaryForm", &CLASSTYPE::fromSerializedBinaryForm) \
+  .function("toSerializedBinaryForm", &CLASSTYPE::toSerializedBinaryForm) \
+  .class_function("fromJson", &CLASSTYPE::fromJson) \
+  .function("toCustomJson", &CLASSTYPE::toJson) \
+  .function("toJson", &(toJsonSimple<CLASSTYPE>)) \
+
+#define AddDerivablesSerliazable(CLASSTYPE)     AddSerializable(CLASSTYPE) \
+  .class_function("deriveFromSeed", &CLASSTYPE::deriveFromSeed)
+
+
+
 EMSCRIPTEN_BINDINGS(SeededCrypto) {
   
   class_<PackagedSealedMessage>("PackagedSealedMessage")
@@ -99,7 +108,7 @@ EMSCRIPTEN_BINDINGS(SeededCrypto) {
    .function("seal", select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SymmetricKey::seal))
    .function("unseal", &symmetricUnseal)
    .function("unsealJsonPackagedSealedMessage", &symmetricUnsealJsonPackagedSealedMessage)
-   .class_function("unseal", &staticUnseal)
+   .class_function("unseal", &staticSymmetricUnseal)
     // .class_function("deriveFromSeed", &SymmetricKey::deriveFromSeed)
     // .class_function("fromSerializedBinaryForm", &SymmetricKey::fromSerializedBinaryForm)
     // .function("toSerializedBinaryForm", &SymmetricKey::toSerializedBinaryForm)

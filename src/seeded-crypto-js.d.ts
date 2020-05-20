@@ -1,101 +1,135 @@
+/// <reference types="emscripten" />
+
 declare module "seeded-crypto-js" {
 
-type TypedByteArray = ArrayBuffer | Uint8Array | Uint8ClampedArray | Int8Array
-type BindableToString = TypedByteArray | string
-type ByteArrayAsUrlSafeBase64String = string;
+export enum PtrIntoSeededCryptoModule {_=0}
 
-class ExplicitDelete {
+export type TypedByteArray = ArrayBuffer | Uint8Array | Uint8ClampedArray | Int8Array
+export type BindableToString = TypedByteArray | string
+export type ByteArrayAsUrlSafeBase64String = string;
+
+export class ExplicitDelete {
     delete(): void; 
 }
 
-class SealedCryptoSerializableObject<T extends SealedCryptoSerializableObject<T>> extends ExplicitDelete {
+export class SealedCryptoSerializableObjectStatics<T> extends ExplicitDelete {
     fromJson(json: string): T;
-    toJson(indent?: number, indentChar?: string): string;
     fromSerializedBinaryForm(serializedBinaryForm: TypedByteArray): T;
+}
+
+export class DerivedSecretStatics<T> extends SealedCryptoSerializableObjectStatics<T> {
+    deriveFromSeed: (seed: string, derivationOptionsJson: string) => T;
+}
+
+export class SealedCryptoSerializableObject extends ExplicitDelete {
+    toCustomJson(indent: number, indentCharCode: number): string;
+    toJson(): string;
     toSerializedBinaryForm(): TypedByteArray;
 }
 
-class DerivedSecret<T extends DerivedSecret<T>> extends SealedCryptoSerializableObject<T> {
-    static derive: (seed: string, derivationOptionsJson: string) => DerivedSecret<any>;
+export class DerivedSecret extends SealedCryptoSerializableObject {
     readonly derivationOptionsJson: string;    
 }
 
-interface DerivedSecretJson {
+export interface DerivedSecretJson {
     derivationOptionsJson: string;
 }
 
-class PackagedSealedMessage extends SealedCryptoSerializableObject<PackagedSealedMessage> {
+export class PackagedSealedMessage extends SealedCryptoSerializableObject {
     readonly ciphertext: Uint8Array;
     readonly derivationOptionsJson: string;
     readonly unsealingInstructions: string;
     constructor(ciphertext: TypedByteArray, derivationOptionsJson: string, unsealingInstructions: string)
 }
 
-interface PackagedSealedMessageJson {
+export interface PackagedSealedMessageJson {
     ciphertext: ByteArrayAsUrlSafeBase64String;
     derivationOptionsJson: string;
     unsealingInstructions: string;
 }
 
-class SealingKey extends DerivedSecret<SealingKey> {
-    static derive: (seed: string, derivationOptionsJson: string) => SealingKey;
+export class SealingKey extends DerivedSecret {
+    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => SealingKey;
     readonly publicKeyBytes: Uint8Array;
 }
 
-interface SealingKeyJson extends DerivedSecretJson {
+export interface SealingKeyJson extends DerivedSecretJson {
     publicKeyBytes: ByteArrayAsUrlSafeBase64String;
 }
 
-class Secret extends DerivedSecret<Secret> {
-    static derive: (seed: string, derivationOptionsJson: string) => Secret;
+export class Secret extends DerivedSecret {
+    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => Secret;
     readonly secretBytes: Uint8Array;
 }
 
-interface SecretJson extends DerivedSecretJson {
+export interface SecretJson extends DerivedSecretJson {
     secretBytes: ByteArrayAsUrlSafeBase64String;
 }
 
-class SignatureVerificationKey extends DerivedSecret<SignatureVerificationKey> {
-    static derive: (seed: string, derivationOptionsJson: string) => SignatureVerificationKey;
+export class SignatureVerificationKey extends DerivedSecret {
+    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => SignatureVerificationKey;
     readonly signatureVerificationKeyBytes: Uint8Array;
 }
 
-interface SignatureVerificationKeyJson extends DerivedSecretJson {
+export interface SignatureVerificationKeyJson extends DerivedSecretJson {
     signatureVerificationKeyBytes: ByteArrayAsUrlSafeBase64String;
 }
 
-class SigningKey extends DerivedSecret<SigningKey> {
-    static derive: (seed: string, derivationOptionsJson: string) => SigningKey;
+export class SigningKey extends DerivedSecret {
+    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => SigningKey;
     // FIXME -- how to handle special-case of toJson function?
     toJsonWithoutSignatureVerificaitonKeyBytes(indent?: number, indentChar?: string): String;
     readonly signingKeyBytes: Uint8Array;
     readonly signatureVerificationKeyBytes: Uint8Array;
 }
 
-interface SigningKeyJson extends DerivedSecretJson {
+export interface SigningKeyJson extends DerivedSecretJson {
     signingKeyBytes: ByteArrayAsUrlSafeBase64String;
     signatureVerificationKeyBytes?: ByteArrayAsUrlSafeBase64String;
 }
 
-class SymmetricKey extends DerivedSecret<SymmetricKey> {
-    static derive: (seed: string, derivationOptionsJson: string) => SymmetricKey;
-    readonly keyBytes: Uint8Array
+class StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
+    unseal(packagedSealedMessage: PackagedSealedMessage, derivationOptions: string): Uint8Array;
 }
 
-interface SymmetricKeyJson extends DerivedSecretJson {
+export class SymmetricKey extends DerivedSecret {
+    readonly keyBytes: Uint8Array;
+    seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
+    unseal(packagedSealedMessage: PackagedSealedMessage): Uint8Array;
+}
+
+export interface SymmetricKeyJson extends DerivedSecretJson {
     keyBytes: ByteArrayAsUrlSafeBase64String;
 }
 
-class UnsealingKey extends DerivedSecret<UnsealingKey> {
-    static derive: (seed: string, derivationOptionsJson: string) => UnsealingKey;
+export class UnsealingKey extends DerivedSecret {
+    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => UnsealingKey;
     readonly privateKeyBytes: Uint8Array;
     readonly publicKeyBytes: Uint8Array;
 }
 
-interface UnsealingKeyJson extends DerivedSecretJson {
+export interface UnsealingKeyJson extends DerivedSecretJson {
     privateKeyBytes: ByteArrayAsUrlSafeBase64String;
     publicKeyBytes: ByteArrayAsUrlSafeBase64String;
 }
+
+
+
+export interface SeededCryptoModule extends EmscriptenModule {
+    PackagedSealedMessage: new () => PackagedSealedMessage | SealedCryptoSerializableObjectStatics<PackagedSealedMessage>;
+    SymmetricKey: (new () => SymmetricKey) & StaticSymmetricKey;
+}
+
+// Emscripten promises are kinda like promises... but it's important that we
+// not get lulled into thinking they're actually promises.
+// https://github.com/emscripten-core/emscripten/issues/5820
+interface SeededCryptoModuleNotReallyAPromise {
+    then: (fn: (SeededCrypto: SeededCryptoModule) => any) => void
+}
+
+// Mirroring the last line of the .js file generated by emscripten in es6 mode
+const Module: () => SeededCryptoModuleNotReallyAPromise;
+export default Module;
 
 
 }
