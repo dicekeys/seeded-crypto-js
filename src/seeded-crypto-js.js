@@ -736,8 +736,8 @@ var wasmMemory;
 // In the wasm backend, we polyfill the WebAssembly object,
 // so this creates a (non-native-wasm) table for us.
 var wasmTable = new WebAssembly.Table({
-  'initial': 213,
-  'maximum': 213 + 0,
+  'initial': 226,
+  'maximum': 226 + 0,
   'element': 'anyfunc'
 });
 
@@ -1358,11 +1358,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5297744,
+    STACK_BASE = 5298176,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 54864,
-    DYNAMIC_BASE = 5297744,
-    DYNAMICTOP_PTR = 54704;
+    STACK_MAX = 55296,
+    DYNAMIC_BASE = 5298176,
+    DYNAMICTOP_PTR = 55136;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1962,8 +1962,8 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  15911: function() {return Module.getRandomValue();},  
- 15949: function() {if (Module.getRandomValue === undefined) { try { var window_ = 'object' === typeof window ? window : self; var crypto_ = typeof window_.crypto !== 'undefined' ? window_.crypto : window_.msCrypto; var randomValuesStandard = function() { var buf = new Uint32Array(1); crypto_.getRandomValues(buf); return buf[0] >>> 0; }; randomValuesStandard(); Module.getRandomValue = randomValuesStandard; } catch (e) { try { var crypto = require('crypto'); var randomValueNodeJS = function() { var buf = crypto['randomBytes'](4); return (buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3]) >>> 0; }; randomValueNodeJS(); Module.getRandomValue = randomValueNodeJS; } catch (e) { throw 'No secure random number generator found'; } } }}
+  16167: function() {return Module.getRandomValue();},  
+ 16205: function() {if (Module.getRandomValue === undefined) { try { var window_ = 'object' === typeof window ? window : self; var crypto_ = typeof window_.crypto !== 'undefined' ? window_.crypto : window_.msCrypto; var randomValuesStandard = function() { var buf = new Uint32Array(1); crypto_.getRandomValues(buf); return buf[0] >>> 0; }; randomValuesStandard(); Module.getRandomValue = randomValuesStandard; } catch (e) { try { var crypto = require('crypto'); var randomValueNodeJS = function() { var buf = crypto['randomBytes'](4); return (buf[0] << 24 | buf[1] << 16 | buf[2] << 8 | buf[3]) >>> 0; }; randomValueNodeJS(); Module.getRandomValue = randomValueNodeJS; } catch (e) { throw 'No secure random number generator found'; } } }}
 };
 
 function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
@@ -1973,7 +1973,7 @@ function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
 
 
 
-// STATICTOP = STATIC_BASE + 53840;
+// STATICTOP = STATIC_BASE + 54272;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -4036,7 +4036,7 @@ function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 54704;
+      return 55136;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {

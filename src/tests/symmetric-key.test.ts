@@ -13,11 +13,14 @@ describe("SymmetricKey", () => {
     test('SymmetricKey', async () => {
         var module = await SeededCryptoModulePromise;
         var symmetricKey = module.SymmetricKey.deriveFromSeed("yo", "");
+        const keyBytes = symmetricKey.keyBytes;
+        strictEqual(keyBytes.length, 32);
         const plaintext = "perchance to SCREAM!";
         const message = symmetricKey.seal("perchance to SCREAM!", "");
         const recoveredPlaintextBytes = symmetricKey.unseal(message);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(plaintext, recoveredPlaintext);
+        symmetricKey.delete();
         // console.log("key as json", key.toJson());
         // console.log("key as json", key.toCustomJson(2, "\t".charCodeAt(0)));
         // console.log("key bytes", key.keyBytes);
