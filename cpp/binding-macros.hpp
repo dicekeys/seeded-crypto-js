@@ -20,5 +20,8 @@ inline emscripten::val toSerializedBinaryForm(T binarySerializable) {
   .function("toCustomJson", &CLASSTYPE::toJson) \
   .function("toJson", &toJsonSimple<CLASSTYPE>)
 
-#define AddDerivablesSerliazable(CLASSTYPE)     AddSerializable(CLASSTYPE) \
-  .class_function("deriveFromSeed", &CLASSTYPE::deriveFromSeed)
+#define AddDerivablesSerliazable(CLASSTYPE)    AddSerializable(CLASSTYPE) \
+  .class_function("deriveFromSeed", &CLASSTYPE::deriveFromSeed) \
+  .property<std::string>("derivationOptionsJson", \
+      [](const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; })
+

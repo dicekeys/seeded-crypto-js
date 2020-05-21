@@ -89,6 +89,7 @@ export interface SigningKeyJson extends DerivedSecretJson {
 }
 
 class StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
+    seal(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
     unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
     unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string, seedString: string): Uint8Array;
     unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;

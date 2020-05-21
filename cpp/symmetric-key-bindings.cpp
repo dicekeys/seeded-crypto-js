@@ -4,30 +4,10 @@
 #include "binding-helpers.hpp"
 #include "binding-macros.hpp"
 
-// inline emscripten::val symmetricUnseal(
-//   const SymmetricKey& symmetricKey, 
-//   const PackagedSealedMessage& packagedSealedMessage
-// ) {
-//   return toJsUint8Array(symmetricKey.unseal(packagedSealedMessage));
-// }
-
-// inline emscripten::val symmetricUnsealJsonPackagedSealedMessage(
-//   SymmetricKey& symmetricKey,
-//   const std::string& packagedSealedMessageJson
-// ) {
-//   return toJsUint8Array(
-//     symmetricKey.unseal(
-//       PackagedSealedMessage::fromJson(packagedSealedMessageJson)
-//       )
-//     );
-// }
-
-
 EMSCRIPTEN_BINDINGS(SymmetricKey) {
 
   emscripten::class_<SymmetricKey>("SymmetricKey")
     AddDerivablesSerliazable(SymmetricKey)
-
     // export class SymmetricKey extends DerivedSecret {
     //   readonly keyBytes: Uint8Array;
     .property<emscripten::val>("keyBytes",
@@ -60,6 +40,12 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
     // }
 
     // class StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
+    //   seal(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    .class_function<PackagedSealedMessage>(
+      "seal",*[](const std::string& message, const std::string& unsealingInstructions, const std::string& seedString, const std::string& derivationOptions) {
+          return SymmetricKey::deriveFromSeed(seedString, derivationOptions).seal(message, unsealingInstructions);
+        }
+    )
     //   unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
     .class_function<emscripten::val>(
       "unseal",*[](
