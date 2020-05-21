@@ -18,7 +18,7 @@ export class SealedCryptoSerializableObjectStatics<T> extends ExplicitDelete {
 }
 
 export class DerivedSecretStatics<T> extends SealedCryptoSerializableObjectStatics<T> {
-    deriveFromSeed: (seed: string, derivationOptionsJson: string) => T;
+    deriveFromSeed: (seedString: string, derivationOptionsJson: string) => T;
 }
 
 export class SealedCryptoSerializableObject extends ExplicitDelete {
@@ -49,7 +49,7 @@ export interface PackagedSealedMessageJson {
 }
 
 export class SealingKey extends DerivedSecret {
-    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => SealingKey;
+    static deriveFromSeed: (seedString: string, derivationOptionsJson: string) => SealingKey;
     readonly publicKeyBytes: Uint8Array;
 }
 
@@ -58,7 +58,7 @@ export interface SealingKeyJson extends DerivedSecretJson {
 }
 
 export class Secret extends DerivedSecret {
-    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => Secret;
+    static deriveFromSeed: (seedString: string, derivationOptionsJson: string) => Secret;
     readonly secretBytes: Uint8Array;
 }
 
@@ -67,7 +67,7 @@ export interface SecretJson extends DerivedSecretJson {
 }
 
 export class SignatureVerificationKey extends DerivedSecret {
-    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => SignatureVerificationKey;
+    static deriveFromSeed: (seedString: string, derivationOptionsJson: string) => SignatureVerificationKey;
     readonly signatureVerificationKeyBytes: Uint8Array;
 }
 
@@ -76,7 +76,7 @@ export interface SignatureVerificationKeyJson extends DerivedSecretJson {
 }
 
 export class SigningKey extends DerivedSecret {
-    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => SigningKey;
+    static deriveFromSeed: (seedString: string, derivationOptionsJson: string) => SigningKey;
     // FIXME -- how to handle special-case of toJson function?
     toJsonWithoutSignatureVerificaitonKeyBytes(indent?: number, indentChar?: string): String;
     readonly signingKeyBytes: Uint8Array;
@@ -89,13 +89,17 @@ export interface SigningKeyJson extends DerivedSecretJson {
 }
 
 class StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
-    unseal(packagedSealedMessage: PackagedSealedMessage, derivationOptions: string): Uint8Array;
+    unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
+    unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string, seedString: string): Uint8Array;
+    unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;
 }
 
 export class SymmetricKey extends DerivedSecret {
     readonly keyBytes: Uint8Array;
     seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
     unseal(packagedSealedMessage: PackagedSealedMessage): Uint8Array;
+    unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string): Uint8Array;
+    unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray): Uint8Array;
 }
 
 export interface SymmetricKeyJson extends DerivedSecretJson {
@@ -103,7 +107,7 @@ export interface SymmetricKeyJson extends DerivedSecretJson {
 }
 
 export class UnsealingKey extends DerivedSecret {
-    static deriveFromSeed: (seed: string, derivationOptionsJson: string) => UnsealingKey;
+    static deriveFromSeed: (seedString: string, derivationOptionsJson: string) => UnsealingKey;
     readonly privateKeyBytes: Uint8Array;
     readonly publicKeyBytes: Uint8Array;
 }

@@ -47,6 +47,8 @@ target_compile_options(
     -Werror
     "SHELL:-s MODULARIZE=1"
     "SHELL:-s ASSERTIONS=2"
+    "SHELL:-s DISABLE_EXCEPTION_CATCHING=0"
+    "SHELL:-s EXCEPTION_DEBUG=1"
     --memory-init-file 0
     -O3
     -g4

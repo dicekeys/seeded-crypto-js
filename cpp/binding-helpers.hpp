@@ -18,6 +18,19 @@ inline std::vector<T> vectorFromJsTypedNumericArray(const emscripten::val &typed
   return vec;
 }
 
+inline SodiumBuffer sodiumBufferFromJsTypedNumericArray(const emscripten::val &typedArray)
+{
+  const unsigned int length = typedArray["length"].as<unsigned int>();
+  const unsigned int bytesPerElement = typedArray["BYTES_PER_ELEMENT"].as<unsigned int>();
+  const unsigned int lengthInBytes = bytesPerElement * length;
+  const emscripten::val heap = emscripten::val::module_property("HEAPU8");
+  const emscripten::val memory = heap["buffer"];
+  SodiumBuffer sodiumBuffer(lengthInBytes);
+  const emscripten::val memoryView = typedArray["constructor"].new_(memory, reinterpret_cast<uintptr_t>(sodiumBuffer.data), length);
+  memoryView.call<void>("set", typedArray);
+  return sodiumBuffer;
+}
+
 inline std::vector<unsigned char> byteVectorFromJsNumericArray(const emscripten::val &typedArray) {
     return vectorFromJsTypedNumericArray<unsigned char>(typedArray);
 }
