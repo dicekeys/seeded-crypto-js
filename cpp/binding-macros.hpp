@@ -17,11 +17,16 @@ inline emscripten::val toSerializedBinaryForm(T binarySerializable) {
   .class_function("fromSerializedBinaryForm", &CLASSTYPE::fromSerializedBinaryForm) \
   .function("toSerializedBinaryForm", &toSerializedBinaryForm<CLASSTYPE>) \
   .class_function("fromJson", &CLASSTYPE::fromJson) \
-  .function("toCustomJson", &CLASSTYPE::toJson) \
-  .function("toJson", &toJsonSimple<CLASSTYPE>)
+  .function("toJson",  *[] \
+    (const CLASSTYPE &jsonSerializable)->std::string{ return jsonSerializable.toJson(); }) \
+  .function("toCustomJson", &CLASSTYPE::toJson)
 
-#define AddDerivablesSerliazable(CLASSTYPE)    AddSerializable(CLASSTYPE) \
-  .class_function("deriveFromSeed", &CLASSTYPE::deriveFromSeed) \
-  .property<std::string>("derivationOptionsJson", \
-      [](const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; })
+#define AddIndirectlyDerivable(CLASSTYPE) \
+  .property<std::string>("derivationOptionsJson", *[] \
+  (const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; })
+
+
+#define AddDirectlyDerivable(CLASSTYPE)  \
+  AddIndirectlyDerivable(CLASSTYPE) \
+  .class_function("deriveFromSeed", &CLASSTYPE::deriveFromSeed)
 

@@ -7,7 +7,8 @@
 EMSCRIPTEN_BINDINGS(SymmetricKey) {
 
   emscripten::class_<SymmetricKey>("SymmetricKey")
-    AddDerivablesSerliazable(SymmetricKey)
+    AddSerializable(SymmetricKey)
+    AddDirectlyDerivable(SymmetricKey)
     // export class SymmetricKey extends DerivedSecret {
     //   readonly keyBytes: Uint8Array;
     .property<emscripten::val>("keyBytes",
@@ -17,6 +18,20 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
 
     //   seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
     .function("seal", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SymmetricKey::seal))
+
+    //   sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    .function("sealToCiphertextOnly", *[](
+        const SymmetricKey& symmetricKey,
+        const std::string& message,
+        const std::string& unsealingInstructions = {}
+      )->emscripten::val {
+        return toJsUint8Array( symmetricKey.sealToCiphertextOnly(message, unsealingInstructions) );
+      })
+
+    // unsealCiphertext(ciphertext: TypedByteArray, unsealingInstructions: string): Uint8Array;
+    .function("unsealCiphertext", *[](const SymmetricKey& symmetricKey, const emscripten::val &ciphertext, const std::string& unsealingInstructions)->emscripten::val {
+        return toJsUint8Array(symmetricKey.unseal(byteVectorFromJsNumericArray(ciphertext), unsealingInstructions));
+      })
 
     //   unseal(packagedSealedMessage: PackagedSealedMessage): Uint8Array;
     .function("unseal", *[](const SymmetricKey& symmetricKey, const PackagedSealedMessage& packagedSealedMessage)->emscripten::val {

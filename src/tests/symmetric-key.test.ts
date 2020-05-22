@@ -3,6 +3,7 @@ import {
     SymmetricKey    
 } from "../seeded-crypto"
 import { strictEqual } from "assert";
+import { PackagedSealedMessage } from "seeded-crypto-js";
 
 test("Got jest?", () => {
     expect(true);
@@ -31,6 +32,30 @@ describe("SymmetricKey", () => {
         // console.log("key as json", key.toJson());
         // console.log("key as json", key.toCustomJson(2, "\t".charCodeAt(0)));
         // console.log("key bytes", key.keyBytes);
+    });
+
+    test('raw seal', async () => {
+        var module = await SeededCryptoModulePromise;
+        var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+        strictEqual(derivationOptionsJson, symmetricKey.derivationOptionsJson);
+        const ciphertext = symmetricKey.sealToCiphertextOnly(plaintext, unsealingInstructions);
+        const message = new module.PackagedSealedMessage(ciphertext, derivationOptionsJson, unsealingInstructions);
+        strictEqual(message.derivationOptionsJson, derivationOptionsJson);
+        strictEqual(message.unsealingInstructions, unsealingInstructions);
+        const recoveredPlaintextBytes = symmetricKey.unseal(message);
+        const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        strictEqual(recoveredPlaintext, plaintext);
+        symmetricKey.delete();
+    });
+
+    
+    test('raw unseal', async () => {
+        var module = await SeededCryptoModulePromise;
+        var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const message = symmetricKey.seal(plaintext, unsealingInstructions);
+        const recoveredPlaintextBytes = symmetricKey.unsealCiphertext(message.ciphertext, message.unsealingInstructions);
+        const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        strictEqual(recoveredPlaintext, plaintext);
     });
 
     test('static unseal', async () => {
