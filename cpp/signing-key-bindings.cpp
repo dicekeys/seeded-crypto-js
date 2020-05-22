@@ -12,16 +12,16 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
     AddDirectlyDerivable(SigningKey)
 
     // export class SigningKey extends DerivedSecret {
-    //   readonly sealingKeyBytes: Uint8Array;
+    //   readonly signingKeyBytes: Uint8Array;
     .property<emscripten::val>("signingKeyBytes",
       [](const SigningKey &signingKey)->emscripten::val{
         return toJsUint8Array(signingKey.signingKeyBytes);
     })
 
-    //   readonly SigningKeyBytes: Uint8Array;
+    //   readonly singatureVerificationKeyBytes: Uint8Array;
     .property<emscripten::val>("signatureVerificationKeyBytes",
-      [](SigningKey &signingKey)->emscripten::val{
-        return toJsUint8Array(signingKey.getSignatureVerificationKeyBytes());
+      [](const SigningKey &signingKey)->emscripten::val{
+        return toJsUint8Array(((SigningKey&)signingKey).getSignatureVerificationKeyBytes());
     })
 
     //   getSignatureVerificationKey(): SignatureVerificationKey;
@@ -31,7 +31,7 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
 
     //   generateSignature(message: BindableToString): Uint8Array
     .function("generateSignature", *[](SigningKey& signingKey, const std::string& message){
-      return signingKey.generateSignature((const unsigned char*) message.data(), message.size());
+      return toJsUint8Array(signingKey.generateSignature((const unsigned char*) message.data(), message.size()));
     })
 
     //   generateSignature(message: BindableToString, seedString: string, derivationOptionsJson: string): Uint8Array;
@@ -39,8 +39,10 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
         const std::string& message,
         const std::string& seedString,
         const std::string& derivationOptionsJson){
-      return SigningKey::deriveFromSeed(seedString, derivationOptionsJson)
-        .generateSignature((const unsigned char*) message.data(), message.size());
+        return toJsUint8Array(
+          SigningKey::deriveFromSeed(seedString, derivationOptionsJson)
+            .generateSignature((const unsigned char*) message.data(), message.size())
+        );
     })
   ;
 }

@@ -33,9 +33,32 @@ EMSCRIPTEN_BINDINGS(UnsealingKey) {
           UnsealingKey::unseal(packagedSealedMessage, seedString)
         ); }
     )
+        //   unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string, seedString: string): Uint8Array;
+    .class_function<emscripten::val>(
+      "unsealJsonPackagedSealedMessage",*[](
+        const std::string& jsonPackagedSealedMessage,
+        const std::string& seedString
+       ) { return toJsUint8Array(
+          UnsealingKey::unseal(
+            PackagedSealedMessage::fromJson(jsonPackagedSealedMessage), seedString
+          ) ); }
+    )
+    //   unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;
+    .class_function<emscripten::val>(
+      "unsealBinaryPackagedSealedMessage",*[](
+        const emscripten::val binaryPackagedSealedMessage,
+        const std::string& seedString
+       ) { 
+         return toJsUint8Array(
+          UnsealingKey::unseal(
+            PackagedSealedMessage::fromSerializedBinaryForm(
+              sodiumBufferFromJsTypedNumericArray(binaryPackagedSealedMessage)
+            ), seedString
+          ) ); }
+    )
 
     // getSealingKey(): SealingKey;
-    .function("getSealingKey", UnsealingKey::getSealingKey)
+    .function("getSealingKey", &UnsealingKey::getSealingKey)
 
     // unsealCiphertext(ciphertext: TypedByteArray, unsealingInstructions: string): Uint8Array;
     .function("unsealCiphertext", *[](const UnsealingKey& UnsealingKey, const emscripten::val &ciphertext, const std::string& unsealingInstructions)->emscripten::val {

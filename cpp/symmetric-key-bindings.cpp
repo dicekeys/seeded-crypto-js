@@ -83,7 +83,7 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
     //   unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;
     .class_function<emscripten::val>(
       "unsealBinaryPackagedSealedMessage",*[](
-        const emscripten::val binaryPackagedSealedMessage,
+      const emscripten::val binaryPackagedSealedMessage,
         const std::string& seedString
        ) { 
          return toJsUint8Array(
@@ -93,7 +93,6 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
             ), seedString
           ) ); }
     )
-    // }
   ;
 }
 

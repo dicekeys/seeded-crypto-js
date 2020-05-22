@@ -1,13 +1,7 @@
 import {
     SeededCryptoModulePromise,
-    SymmetricKey    
 } from "../seeded-crypto"
 import { strictEqual } from "assert";
-import { PackagedSealedMessage } from "seeded-crypto-js";
-
-test("Got jest?", () => {
-    expect(true);
-})
 
 describe("SymmetricKey", () => {
 

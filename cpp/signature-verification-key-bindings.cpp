@@ -13,13 +13,13 @@ EMSCRIPTEN_BINDINGS(SignatureVerificationKey) {
 
     //   readonly SignatureVerificationKeyBytes: Uint8Array;
     .property<emscripten::val>("signatureVerificationKeyBytes",
-      [](SignatureVerificationKey &signatureVerificationKey)->emscripten::val{
+      [](const SignatureVerificationKey &signatureVerificationKey)->emscripten::val{
         return toJsUint8Array(signatureVerificationKey.signatureVerificationKeyBytes);
     })
 
 
     //   verify(message: BindableToString, signature: TypedByteArray): boolean;
-    .function("verify", *[](SignatureVerificationKey& signatureVerificationKey,
+    .function("verify", *[](const SignatureVerificationKey& signatureVerificationKey,
         const std::string &message,
         const emscripten::val &signature
       ){

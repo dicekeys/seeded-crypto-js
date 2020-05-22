@@ -22,12 +22,12 @@ EMSCRIPTEN_BINDINGS(SealingKey) {
     .function("seal", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SealingKey::seal))
 
     //   sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
-    .function<emscripten::val>("sealToCiphertextOnly", *[](
+    .function("sealToCiphertextOnly", *[](
         const SealingKey& sealingKey,
         const std::string& message,
         const std::string& unsealingInstructions = {}
       ) {
-        sealingKey.sealToCiphertextOnly(message, unsealingInstructions);
+        return toJsUint8Array(sealingKey.sealToCiphertextOnly(message, unsealingInstructions));
       })
   ;
 }

@@ -56,12 +56,12 @@ interface StaticSealingKey extends DerivedSecretStatics<SealingKey> {
 
 export interface SealingKey extends DerivedSecret {
     readonly sealingKeyBytes: Uint8Array;
+    seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
+    sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
 }
 
 export interface SealingKeyJson extends DerivedSecretJson {
-    publicKeyBytes: ByteArrayAsUrlSafeBase64String;
-    seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
-    sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    sealingKeyBytes: ByteArrayAsUrlSafeBase64String;
 }
 
 interface StaticSecret extends DerivedSecretStatics<Secret> {
@@ -130,11 +130,13 @@ export interface SymmetricKeyJson extends DerivedSecretJson {
 
 interface StaticUnsealingKey extends DerivedSecretStatics<UnsealingKey> {
     unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
+    unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string, seedString: string): Uint8Array;
+    unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;
 }
 
 export interface UnsealingKey extends DerivedSecret {
-    readonly privateKeyBytes: Uint8Array;
-    readonly publicKeyBytes: Uint8Array;
+    readonly sealingKeyBytes: Uint8Array;
+    readonly unsealingKeyBytes: Uint8Array;
     getSealingKey(): SealingKey;
     unsealCiphertext(ciphertext: TypedByteArray, unsealingInstructions: string): Uint8Array;
     unseal(packagedSealedMessage: PackagedSealedMessage): Uint8Array;
