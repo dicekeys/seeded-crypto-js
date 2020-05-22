@@ -10,7 +10,7 @@ describe("SigningKey", () => {
     const plaintext = "This seals the deal!";
     const unsealingInstructions = "Go to jail. Go directly to jail. Do not pass go. Do not collected $200."
 
-    test('seal and unseal', async () => {
+    test('sign and verify', async () => {
         var module = await SeededCryptoModulePromise;
         const signingKey = module.SigningKey.deriveFromSeed(seedString, derivationOptionsJson);
         const signatureVerificationKey = signingKey.getSignatureVerificationKey();
@@ -27,7 +27,7 @@ describe("SigningKey", () => {
         signingKey.delete();
     });
 
-    test('raw sign', async () => {
+    test('raw sign and verify', async () => {
         var module = await SeededCryptoModulePromise;
         const signingKey = module.SigningKey.deriveFromSeed(seedString, derivationOptionsJson);
         const signatureVerificationKey = signingKey.getSignatureVerificationKey();
