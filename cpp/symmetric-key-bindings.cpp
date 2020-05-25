@@ -16,6 +16,35 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
         return toJsUint8Array(symmetricKey.keyBytes);
     })
 
+    //   sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
+    .function("sealWithInstructions", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SymmetricKey::seal))
+
+    //   seal(message: BindableToString): PackagedSealedMessage;
+    .function("seal", *[](
+        const SymmetricKey& symmetricKey,
+        const std::string& message
+      )->PackagedSealedMessage {
+        return symmetricKey.seal(message);
+      })
+
+    //   sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    .function("sealToCiphertextOnlyWithInstructions", *[](
+        const SymmetricKey& symmetricKey,
+        const std::string& message,
+        const std::string& unsealingInstructions
+      ) {
+        return toJsUint8Array(symmetricKey.sealToCiphertextOnly(message, unsealingInstructions));
+      })
+
+
+    //   sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    .function("sealToCiphertextOnly", *[](
+        const SymmetricKey& symmetricKey,
+        const std::string& message
+      ) {
+        return toJsUint8Array(symmetricKey.sealToCiphertextOnly(message));
+      })
+
     //   seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
     .function("seal", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SymmetricKey::seal))
 
@@ -55,12 +84,20 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
     // }
 
     // class StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
+    //   seal(message: BindableToString, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    .class_function<PackagedSealedMessage>(
+      "seal",*[](const std::string& message, const std::string& seedString, const std::string& derivationOptions) {
+          return SymmetricKey::deriveFromSeed(seedString, derivationOptions).seal(message);
+        }
+    )
+
     //   seal(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
     .class_function<PackagedSealedMessage>(
-      "seal",*[](const std::string& message, const std::string& unsealingInstructions, const std::string& seedString, const std::string& derivationOptions) {
+      "sealWithInstructions",*[](const std::string& message, const std::string& unsealingInstructions, const std::string& seedString, const std::string& derivationOptions) {
           return SymmetricKey::deriveFromSeed(seedString, derivationOptions).seal(message, unsealingInstructions);
         }
     )
+
     //   unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
     .class_function<emscripten::val>(
       "unseal",*[](

@@ -59,8 +59,10 @@ interface StaticSealingKey extends DerivedSecretStatics<SealingKey> {
 
 export interface SealingKey extends DerivedSecret {
     readonly sealingKeyBytes: Uint8Array;
-    seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
-    sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    seal(message: BindableToString): PackagedSealedMessage;
+    sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
+    sealToCiphertextOnly(message: BindableToString): Uint8Array;
+    sealToCiphertextOnlyWithInstructions(message: BindableToString, unsealingInstructions: string): Uint8Array;
 }
 
 export interface SealingKeyJson extends DerivedSecretJson {
@@ -111,7 +113,8 @@ export interface SigningKeyJson extends DerivedSecretJson {
 }
 
 interface StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
-    seal(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    seal(message: BindableToString, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    sealWithInstructions(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
     unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
     unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string, seedString: string): Uint8Array;
     unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;
@@ -119,8 +122,11 @@ interface StaticSymmetricKey extends DerivedSecretStatics<SymmetricKey> {
 
 export interface SymmetricKey extends DerivedSecret {
     readonly keyBytes: Uint8Array;
-    seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
-    sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    seal(message: BindableToString): PackagedSealedMessage;
+    sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
+    sealToCiphertextOnly(message: BindableToString): Uint8Array;
+    sealToCiphertextOnlyWithInstructions(message: BindableToString, unsealingInstructions: string): Uint8Array;
+
     unsealCiphertext(ciphertext: TypedByteArray, unsealingInstructions: string): Uint8Array;
     unseal(packagedSealedMessage: PackagedSealedMessage): Uint8Array;
     unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string): Uint8Array;
@@ -132,6 +138,8 @@ export interface SymmetricKeyJson extends DerivedSecretJson {
 }
 
 interface StaticUnsealingKey extends DerivedSecretStatics<UnsealingKey> {
+    seal(message: BindableToString, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    sealWithInstructions(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
     unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
     unsealJsonPackagedSealedMessage(jsonPackagedSealedMessage: string, seedString: string): Uint8Array;
     unsealBinaryPackagedSealedMessage(binaryPackagedSealedMessage: TypedByteArray, seedString: string): Uint8Array;

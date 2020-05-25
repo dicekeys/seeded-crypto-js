@@ -57,6 +57,20 @@ EMSCRIPTEN_BINDINGS(UnsealingKey) {
           ) ); }
     )
 
+    //   seal(message: BindableToString, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    .class_function<PackagedSealedMessage>(
+      "seal",*[](const std::string& message, const std::string& seedString, const std::string& derivationOptions) {
+          return UnsealingKey::deriveFromSeed(seedString, derivationOptions).getSealingKey().seal(message);
+        }
+    )
+
+    //   seal(message: BindableToString, unsealingInstructions: string, seedString: string, derivationOptions: string): PackagedSealedMessage;
+    .class_function<PackagedSealedMessage>(
+      "sealWithInstructions",*[](const std::string& message, const std::string& unsealingInstructions, const std::string& seedString, const std::string& derivationOptions) {
+          return UnsealingKey::deriveFromSeed(seedString, derivationOptions).getSealingKey().seal(message, unsealingInstructions);
+        }
+    )
+
     // getSealingKey(): SealingKey;
     .function("getSealingKey", &UnsealingKey::getSealingKey)
 

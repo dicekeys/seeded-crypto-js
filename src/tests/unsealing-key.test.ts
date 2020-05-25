@@ -11,7 +11,7 @@ describe("UnsealingKey", () => {
     const plaintext = "This seals the deal!";
     const unsealingInstructions = "Go to jail. Go directly to jail. Do not pass go. Do not collected $200."
 
-    test('seal and unseal', async () => {
+    test('seal with instructions and unseal', async () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
@@ -19,7 +19,7 @@ describe("UnsealingKey", () => {
         strictEqual(sealingKey.sealingKeyBytes.length, 32);
         strictEqual(unsealingKey.unsealingKeyBytes.length, 32);
         strictEqual(sealingKey.derivationOptionsJson, derivationOptionsJson);
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         strictEqual(message.derivationOptionsJson, derivationOptionsJson);
         strictEqual(message.unsealingInstructions, unsealingInstructions);
         const recoveredPlaintextBytes = unsealingKey.unseal(message);
@@ -29,11 +29,38 @@ describe("UnsealingKey", () => {
         unsealingKey.delete();
     });
 
+    test('seal without instructions and unseal', async () => {
+        var module = await SeededCryptoModulePromise;
+        const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const sealingKey = unsealingKey.getSealingKey();
+        const message = sealingKey.seal(plaintext);
+        strictEqual(message.derivationOptionsJson, derivationOptionsJson);
+        strictEqual(message.unsealingInstructions, "");
+        const recoveredPlaintextBytes = unsealingKey.unseal(message);
+        const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        strictEqual(recoveredPlaintext, plaintext);
+        sealingKey.delete();
+        unsealingKey.delete();
+    });
+    
     test('raw seal', async () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const ciphertext = sealingKey.sealToCiphertextOnly(plaintext, unsealingInstructions);
+        const ciphertext = sealingKey.sealToCiphertextOnly(plaintext);
+        const message = new module.PackagedSealedMessage(ciphertext, derivationOptionsJson, "");
+        const recoveredPlaintextBytes = unsealingKey.unseal(message);
+        const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        strictEqual(recoveredPlaintext, plaintext);
+        sealingKey.delete();
+        unsealingKey.delete();
+    });
+
+    test('raw seal with instructions', async () => {
+        var module = await SeededCryptoModulePromise;
+        const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const sealingKey = unsealingKey.getSealingKey();
+        const ciphertext = sealingKey.sealToCiphertextOnlyWithInstructions(plaintext, unsealingInstructions);
         const message = new module.PackagedSealedMessage(ciphertext, derivationOptionsJson, unsealingInstructions);
         const recoveredPlaintextBytes = unsealingKey.unseal(message);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
@@ -47,7 +74,7 @@ describe("UnsealingKey", () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = unsealingKey.unsealCiphertext(message.ciphertext, message.unsealingInstructions);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);
@@ -59,7 +86,7 @@ describe("UnsealingKey", () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = module.UnsealingKey.unseal(message, seedString);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);
@@ -71,7 +98,7 @@ describe("UnsealingKey", () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = unsealingKey.unsealJsonPackagedSealedMessage(message.toJson());
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);
@@ -83,7 +110,7 @@ describe("UnsealingKey", () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = unsealingKey.unsealBinaryPackagedSealedMessage(message.toSerializedBinaryForm());
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);
@@ -94,7 +121,7 @@ describe("UnsealingKey", () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = module.UnsealingKey.unsealJsonPackagedSealedMessage(message.toJson(), seedString);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);
@@ -104,7 +131,7 @@ describe("UnsealingKey", () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
         const sealingKey = unsealingKey.getSealingKey();
-        const message = sealingKey.seal(plaintext, unsealingInstructions);
+        const message = sealingKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = module.UnsealingKey.unsealBinaryPackagedSealedMessage(message.toSerializedBinaryForm(), seedString);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);

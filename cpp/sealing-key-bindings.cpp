@@ -18,16 +18,33 @@ EMSCRIPTEN_BINDINGS(SealingKey) {
         return toJsUint8Array(sealingKey.sealingKeyBytes);
     })
 
-    //   seal(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
-    .function("seal", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SealingKey::seal))
+    //   sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
+    .function("sealWithInstructions", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SealingKey::seal))
+
+    //   seal(message: BindableToString): PackagedSealedMessage;
+    .function("seal", *[](
+        const SealingKey& sealingKey,
+        const std::string& message
+      )->PackagedSealedMessage {
+        return sealingKey.seal(message);
+      })
+
+    //   sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
+    .function("sealToCiphertextOnlyWithInstructions", *[](
+        const SealingKey& sealingKey,
+        const std::string& message,
+        const std::string& unsealingInstructions
+      ) {
+        return toJsUint8Array(sealingKey.sealToCiphertextOnly(message, unsealingInstructions));
+      })
+
 
     //   sealToCiphertextOnly(message: BindableToString, unsealingInstructions: string): Uint8Array;
     .function("sealToCiphertextOnly", *[](
         const SealingKey& sealingKey,
-        const std::string& message,
-        const std::string& unsealingInstructions = {}
+        const std::string& message
       ) {
-        return toJsUint8Array(sealingKey.sealToCiphertextOnly(message, unsealingInstructions));
+        return toJsUint8Array(sealingKey.sealToCiphertextOnly(message));
       })
   ;
 }
