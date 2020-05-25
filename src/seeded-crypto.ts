@@ -6,7 +6,7 @@ import {
 import {
   getWebAsmModulePromiseWithAugmentedTypes,
   TypedMemoryHelpersForEmscriptenModule
-} from "./should-be-modules/typed-webasm-module-memory-helpers"
+} from  "@dicekeys/webasm-module-memory-helper"
 
 export * from "seeded-crypto-js";
 

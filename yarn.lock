@@ -265,6 +265,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@dicekeys/webasm-module-memory-helper@^1.0.0":
+  version "1.0.0"
+  resolved "https://npm.pkg.github.com/download/@dicekeys/webasm-module-memory-helper/1.0.0/f10ec761e09f397e4bfe3bef110b7128f685b985410f5b6dfbf25351f23f2668#79cc9744a1f7e2462ccbfe7665b55f1eb5357280"
+  integrity sha512-/tqMNPkK8unVzguqjaGFAyRvxwUoatJ3PF3tapLf6Rv8kuZj3mIifKsTbOE/PvReHliCrxYYbhsxhrTS5QIjwQ==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"
