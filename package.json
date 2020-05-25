@@ -12,7 +12,8 @@
     "/dist"
   ],
   "scripts": {    
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "dependencies": {
     "@dicekeys/webasm-module-memory-helper": "^1.0.0",
