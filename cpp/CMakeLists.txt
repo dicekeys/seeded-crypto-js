@@ -70,7 +70,10 @@ target_link_options(
     "SHELL:-s ASSERTIONS=2"
 # Turn on after tooling has better ES6 module support, and change output name to .mjs
 #    "SHELL:-s EXPORT_ES6=1"
-#    "SHELL:-s USE_ES6_IMPORT_META=0"
+#   "SHELL:-s USE_ES6_IMPORT_META=0"
+    "SHELL:-s TOTAL_MEMORY=128MB"
+    "SHELL:-s WASM_MEM_MAX=4GB"
+    "SHELL:-s ALLOW_MEMORY_GROWTH=1"
     "SHELL:-s SINGLE_FILE=1"
     -g4
 )

@@ -21,10 +21,10 @@ describe("Secret", () => {
     test('use argon2', async () => {
         var module = await SeededCryptoModulePromise;
         const oldSecret = module.Secret.deriveFromSeed(seedString, derivationOptionsJson);
+        //                 "hashFunctionMemoryLimitInBytes": 8196,
         const secret = module.Secret.deriveFromSeed(seedString, `
             {
                 "hashFunction": "Argon2id",
-                "hashFunctionMemoryLimitInBytes": 8196,
                 "lengthInBytes": 64
             }
         `.trim());
