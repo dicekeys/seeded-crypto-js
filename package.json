@@ -1,15 +1,20 @@
 {
-  "name": "seeded-crypto-js",
+  "name": "@dicekeys/seeded-crypto-js",
   "version": "0.1.0",
   "description": "DiceKeys Seeded Cryptography Library for JavaScript and TypeScript",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "repository": "https://github.com/dicekeys/seeded-crypto-js",
+  "main": "dist/seeded-crypto.js",
+  "types": "dist/seeded-crypto.d.ts",
+  "scope": "@dicekeys/seeded-crypto-js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/dicekeys",
+    "access": "restricted"
+  },
+  "repository": "https://github.com/dicekeys/seeded-crypto-js.git",
   "author": "Stuart Schechter <stuart@dicekeys.com>",
   "license": "NOT YET LICENSED",
-  "private": true,
   "files": [
-    "/dist"
+    "/dist/",
+    "!/dist/tests/"
   ],
   "scripts": {
     "test": "jest",

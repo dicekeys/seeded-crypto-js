@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
-      "module": "commonjs",
+      "strict": true,
       "declaration": true,
+      "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+      "module": "commonjs",
       "esModuleInterop": true,
       "allowSyntheticDefaultImports": true,
       "target": "esnext",
