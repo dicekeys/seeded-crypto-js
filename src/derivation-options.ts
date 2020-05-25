@@ -108,18 +108,18 @@ interface DerivationOptionsForSigningKey extends
   algorithm?: "Ed25519";
 }
 
-export type KeyDerivationOptions =
+export type DerivationOptions =
   DerivationOptionsForSecret |
   DerivationOptionsforSymmetricKey |
   DerivationOptionsForUnsealingKey |
   DerivationOptionsForSigningKey;
 
-export type KeyDerivationFieldName =
+export type DerivationFieldName =
   (keyof DerivationOptionsForSecret) |
   (keyof DerivationOptionsforSymmetricKey) |
   (keyof DerivationOptionsForUnsealingKey) |
   (keyof DerivationOptionsForSigningKey);
-export const KeyDerivationFieldNames = [
+export const DerivationFieldNames = [
   ...AuthenticationRequirementsFieldNames,
   "algorithm",
   "hashFunction",
@@ -139,9 +139,9 @@ export const KeyDerivationFieldNames = [
 // to validate the correctness of the above array.
 (() => {
 const validateThatAllKeyDerivationFieldNamesAreValid:
-  readonly KeyDerivationFieldName[] = KeyDerivationFieldNames;
+  readonly DerivationFieldName[] = DerivationFieldNames;
 const validateThatAllKeyDerivationFieldNamesAreIncluded:
-  (typeof KeyDerivationFieldNames)[number] = "" as KeyDerivationFieldName;
+  (typeof DerivationFieldNames)[number] = "" as DerivationFieldName;
 })
 
 // export type HashFunctionSpecifierFieldName = (keyof ParameterizedHashAlgorithm);
@@ -162,7 +162,7 @@ const validateThatAllKeyDerivationFieldNamesAreIncluded:
 // Secret
 // Symmetric
 // Public
-export type type = KeyDerivationOptions["type"]
+export type type = DerivationOptions["type"]
 export const types = [
   "Secret",
   "SymmetricKey",
@@ -209,10 +209,10 @@ export const HashFunctions = [
 		(typeof HashFunctions)[number] = "" as HashFunction;
 });
 
-const getKeyDerivationParametersFromDerivationOptions = ({
+const getDerivationParametersFromDerivationOptions = ({
     hashFunction = "SHA256",
     ...options
-}: KeyDerivationOptions) => ({
+}: DerivationOptions) => ({
   hashFunction,
   lengthInBytes:
     // Key for application use use lengthInBytes if set, 32 byte default otherwise
