@@ -2,6 +2,7 @@ import {
     SeededCryptoModulePromise,
 } from "../seeded-crypto"
 import { strictEqual } from "assert";
+import {TextDecoder} from "util";
 
 describe("UnsealingKey", () => {
 

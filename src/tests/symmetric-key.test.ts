@@ -1,6 +1,7 @@
 import {
     SeededCryptoModulePromise,
 } from "../seeded-crypto"
+import {TextDecoder} from "util";
 import { strictEqual } from "assert";
 
 describe("SymmetricKey", () => {
