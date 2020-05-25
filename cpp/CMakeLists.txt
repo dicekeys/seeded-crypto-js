@@ -49,6 +49,8 @@ target_compile_options(
     "SHELL:-s ASSERTIONS=2"
     "SHELL:-s DISABLE_EXCEPTION_CATCHING=0"
     "SHELL:-s EXCEPTION_DEBUG=1"
+    "SHELL:-s EXPORT_ES6=1"
+    "SHELL:-s USE_ES6_IMPORT_META=0"
     --memory-init-file 0
     -O3
     -g4
