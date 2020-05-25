@@ -49,9 +49,7 @@ target_compile_options(
     "SHELL:-s ASSERTIONS=2"
     "SHELL:-s DISABLE_EXCEPTION_CATCHING=0"
     "SHELL:-s EXCEPTION_DEBUG=1"
-    "SHELL:-s EXPORT_ES6=1"
-    "SHELL:-s USE_ES6_IMPORT_META=0"
-    --memory-init-file 0
+#    --memory-init-file 0
     -O3
     -g4
 )
@@ -60,8 +58,9 @@ target_compile_options(
 set_target_properties(
     ${SEEDED_CRYPTO_PROJECT_NAME}
     PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
-    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
+#    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
+#    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../src/"
 )
 
 target_link_options(
@@ -69,6 +68,10 @@ target_link_options(
     --bind
     "SHELL:-s MODULARIZE=1"
     "SHELL:-s ASSERTIONS=2"
+# Turn on after tooling has better ES6 module support, and change output name to .mjs
+#    "SHELL:-s EXPORT_ES6=1"
+#    "SHELL:-s USE_ES6_IMPORT_META=0"
+    "SHELL:-s SINGLE_FILE=1"
     -g4
 )
 

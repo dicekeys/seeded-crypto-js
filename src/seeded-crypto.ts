@@ -1,5 +1,5 @@
 /// <reference types="emscripten" />
-import SeededCryptoModuleNotReallyAPromiseFn from "seeded-crypto-js";
+const SeededCryptoModuleNotReallyAPromiseFn = require("./seeded-crypto-js");
 import {
   getWebAsmModulePromiseWithAugmentedTypes,
   TypedMemoryHelpersForEmscriptenModule
@@ -182,7 +182,7 @@ export type SeededCryptoModuleWithHelpers = SeededCryptoModule &
  * Return a promise to a a web assembly module with our TypeScript helpers for allocating
  * memory within the web assembly memory space.
  */
-export const SeededCryptoModulePromise =
+export const SeededCryptoModulePromise: Promise<SeededCryptoModuleWithHelpers> =
   getWebAsmModulePromiseWithAugmentedTypes(
-    SeededCryptoModuleNotReallyAPromiseFn
-  ) as Promise<SeededCryptoModuleWithHelpers>;
+    (SeededCryptoModuleNotReallyAPromiseFn as (module?: Partial<EmscriptenModule>) => SeededCryptoModuleNotReallyAPromise)()
+  );
