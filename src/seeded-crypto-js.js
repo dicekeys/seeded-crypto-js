@@ -1734,8 +1734,8 @@ function createWasm() {
    return false;
   }
  }
- instantiateAsync();
- return {};
+ return instantiateAsync();
+// return {};
 }
 
 var tempDouble;
