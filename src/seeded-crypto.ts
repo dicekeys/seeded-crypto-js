@@ -194,7 +194,3 @@ export const SeededCryptoModulePromise: Promise<SeededCryptoModuleWithHelpers> =
   getWebAsmModulePromiseWithAugmentedTypes(
     (SeededCryptoModuleNotReallyAPromiseFn as (module?: Partial<EmscriptenModule>) => SeededCryptoModuleNotReallyAPromise)()
   );
-
-function main() {
-    console.log("test");
-}

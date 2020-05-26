@@ -75,6 +75,7 @@ target_link_options(
     "SHELL:-s WASM_MEM_MAX=4GB"
     "SHELL:-s ALLOW_MEMORY_GROWTH=1"
     "SHELL:-s SINGLE_FILE=1"
+    "SHELL:-s SAFE_HEAP=1"
     -g4
 )
 
