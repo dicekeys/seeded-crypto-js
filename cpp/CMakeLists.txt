@@ -78,6 +78,7 @@ target_link_options(
     -g4
 )
 
+
 target_include_directories( ${SEEDED_CRYPTO_PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/seeded-crypto
     $ENV{emsdk}/upstream/emscripten/system/include/

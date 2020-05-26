@@ -1718,7 +1718,7 @@ function createWasm() {
     return result.then(receiveInstantiatedSource, function(reason) {
      err("wasm streaming compile failed: " + reason);
      err("falling back to ArrayBuffer instantiation");
-     instantiateArrayBuffer(receiveInstantiatedSource);
+     return instantiateArrayBuffer(receiveInstantiatedSource);
     });
    });
   } else {
