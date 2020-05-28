@@ -1,0 +1,7 @@
+{
+    "name": "DiceKeys Seeded Cryptography Library for JavaScript & TypeScript",
+    "readme":  "DocReadme.md",
+    "disableSources": true,
+    "excludeNotExported": true,
+    "includeVersion": true
+}
