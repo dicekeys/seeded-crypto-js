@@ -3,5 +3,6 @@
     "readme":  "DocReadme.md",
     "disableSources": true,
     "excludeNotExported": true,
-    "includeVersion": true
+    "includeVersion": true,
+    "listInvalidSymbolLinks": true
 }
