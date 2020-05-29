@@ -21,7 +21,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc && copyfiles --flat src/seeded-crypto-js.* dist",
-    "build-docs": "typedoc"
+    "build-docs": "typedoc && copyfiles --flat _config.yml docs/_config.yml"
   },
   "dependencies": {
     "@dicekeys/webasm-module-memory-helper": "^1.0.3",
