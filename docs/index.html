@@ -1,0 +1,169 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11</title>
+	<meta name="description" content="Documentation for DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#introduction" id="introduction" style="color: inherit; text-decoration: none;">
+					<h1>Introduction</h1>
+				</a>
+				<p>This Seeded Cryptography Library was written to support the DiceKeys project.
+					It is built on top of the <a href="https://github.com/dicekeys/seeded-crypto">DiceKeys C++ Seeded Cryptography Library</a>
+					(<a href="https://dicekeys.github.io/seeded-crypto/">documentation</a>), which is compiled into
+				<a href="https://webassembly.org/">WebAssembly</a> using the <a href="https://emscripten.org/">emscripten</a> compiler.</p>
+				<p>It is an <em>object oriented</em> cryptographic library, with keys
+					(<a href="interfaces/_seeded_crypto_.symmetrickey.html">SymmetricKey</a>, <a href="interfaces/_seeded_crypto_.unsealingkey.html">UnsealingKey</a> &amp; <a href="interfaces/_seeded_crypto_.sealingkey.html">SealingKey</a>, <a href="interfaces/_seeded_crypto_.signingkey.html">SigningKey</a> &amp; <a href="interfaces/_seeded_crypto_.signatureverificationkey.html">SignatureVerificationKey</a>)
+					as first-class objects,
+					and cryptographic operations implemented as methods on those keys.
+					It also supports a derived <a href="interfaces/_seeded_crypto_.secret.html">Secret</a> class, into which
+					cryptographic-strength secrets can be derived and shared with
+				clients that want to implement their own cryptographic operations.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {SeededCryptoModulePromise} <span class="hljs-keyword">from</span> <span class="hljs-string">"seeded-crypto"</span>;
+<span class="hljs-keyword">await</span> seededCryptoModule = <span class="hljs-keyword">await</span> SeededCryptoModulePromise;
+<span class="hljs-keyword">const</span> symmetricKey = seededCryptoModule.SymmetricKey.deriveFromSecret(...);
+<span class="hljs-keyword">const</span> plaintext = <span class="hljs-string">"Wait long enough, and grilled cheese becomes its own spoonerism."</span>);
+<span class="hljs-keyword">const</span> sealedMessage = symmetricKey.seal(plaintext);</code></pre>
+				<p>All keys and secrets are derived from <em>seed</em> strings, using options specified in
+					<a href="https://dicekeys.github.io/seeded-crypto/derivation_options_format.html">JSON Derivation Options format</a>.
+					This is different from most other libraries, which generate keys via a random number generator.
+				(You can still create strong random keys by deriving them from a strong random seed string.)</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> unsealingKey = UnsealingKey.deriveFromSeed(
+    <span class="hljs-comment">// The seed string. Hopefully better than Randall Munroe's</span>
+    <span class="hljs-string">"valid equine capacitor paperclip wrong bovine ground luxury"</span>,
+    <span class="hljs-comment">// Since the seed is still a bit short, use a memory-hard</span>
+    <span class="hljs-comment">// derivation function to derive the key, not just a simple hash.</span>
+    <span class="hljs-string">`{hashFunction: "Argon2id"}`</span>
+);</code></pre>
+				<p>Like <a href="https://libsodium.gitbook.io/doc/">LibSodium</a>, the cryptogrpahic library
+					on which the Seeded Cryptography Library is built, this library is opnionated.
+					It offers a small number of safe options to direct users to good choices, rather
+					than offering a wide variety with some potentially-dangerous choices.
+					For example, instead of <em>encrypt</em> and
+					<em>decrypt</em> operations, the library supports only <em>seal</em> and <em>unseal</em>.
+					The difference is that sealing a message always attaches a message authentication code (MAC)
+					to the ciphertext, and unsealing always ensures that the ciphertext has not been modified
+					by checking the MAC.
+					The seal operation also packages the ciphertext along with the derivation options
+				needed to derive the key needed to unseal the message from the seed.</p>
+				<p>When sealing data, you can also attach a string that must be known
+					to anyone unsealing the message.  This is separate from the key and is
+					included in plaintext in PackagedSealedMessage returned by the seal operation.
+					You can use it, for example, to attach
+					instructions about how such messages should be treated when unsealing.
+				Those instructions are stored in plaintext within the PackagedSealedMessage.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> symmetricKey = seededCryptoModule.SymmetricKey.deriveFromSeed(...);
+<span class="hljs-keyword">const</span> plaintext = <span class="hljs-string">"Wait long enough, and grilled cheese becomes its own spoonerism."</span>;
+<span class="hljs-keyword">const</span> unsealingInstructions =
+    <span class="hljs-string">"Unsealed messages should be shared only with those who like wordplay."</span>;
+<span class="hljs-keyword">const</span> sealedMessage = sk.sealWithInstructions(plaintext, unsealingInstructions);
+<span class="hljs-keyword">const</span> matches: <span class="hljs-built_in">boolean</span> = sealedmessage.unsealingInstructions === unsealingInstructions; <span class="hljs-comment">// true</span></code></pre>
+				<p>All keys and mesage packages in this library can be easily serialized into
+					either JSON format or a binary format, and deserialized,
+					freeing those using the library from having to implement their own
+				serialization methods.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> sealingKey = seededCryptoModule.SealingKey.fromJson(SealingKeyAsJson);
+<span class="hljs-keyword">const</span> sealingKeyAsUint8Array = sealingKey.toSerializedBinaryForm();
+<span class="hljs-keyword">const</span> copyOfSealingKey = seededCryptoModule.SealingKey.fromSerializedBinaryForm(public_key_as_binary);</code></pre>
+				<p>Because all derived objects and <a href="interfaces/_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a>s
+					are allocated in the WebAssembly module&#39;s memory,
+				<strong>you must</strong> delete them manually to avoid memory leaks.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_seeded_crypto_.html">&quot;seeded-<wbr>crypto&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

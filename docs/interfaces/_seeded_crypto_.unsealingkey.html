@@ -1,0 +1,675 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>UnsealingKey | DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11</title>
+	<meta name="description" content="Documentation for DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">DiceKeys Seeded Cryptography Library for JavaScript &amp; TypeScript - v0.1.11</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_seeded_crypto_.html">&quot;seeded-crypto&quot;</a>
+				</li>
+				<li>
+					<a href="_seeded_crypto_.unsealingkey.html">UnsealingKey</a>
+				</li>
+			</ul>
+			<h1>Interface UnsealingKey</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>An UnsealingKey is used to <em>unseal</em> messages sealed with its
+							corresponding <a href="_seeded_crypto_.sealingkey.html">SealingKey</a>.
+							The UnsealingKey and <a href="_seeded_crypto_.sealingkey.html">SealingKey</a> are generated
+							from a seed and set of derivation specified options in specified using the
+						<a href="https://dicekeys.github.io/seeded-crypto/derivation_options_format.html">JSON Derivation Options format</a>.</p>
+					</div>
+					<p>The UnsealingKey includes a copy of the <a href="_seeded_crypto_.unsealingkey.html#sealingkeybytes">sealingKeyBytes</a>, which can be
+					used to reconstruct the <a href="_seeded_crypto_.sealingkey.html">SealingKey</a> by calling <a href="_seeded_crypto_.unsealingkey.html#getsealingkey">getSealingKey</a>.</p>
+					<p>The static methods of this class are documented in <a href="_seeded_crypto_.unsealingkeystatic.html">UnsealingKeyStatic</a>.</p>
+					<p><strong>You must delete this object manually</strong> by calling <a href="_seeded_crypto_.unsealingkey.html#delete">delete</a> to
+						avoid memory leaks, as it is stored within the WebAssembly module
+					and is not automatically garbage collected by the JavaScript runtime.</p>
+					<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {SeededCryptoModulePromise} <span class="hljs-keyword">from</span> <span class="hljs-string">"seeded-crypto"</span>;
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">demo</span>(<span class="hljs-params">mySeedString: <span class="hljs-built_in">string</span>, myDerivationOptionsJson: <span class="hljs-built_in">string</span> = ""</span>) </span>{
+    <span class="hljs-comment">// Ensure the module is loaded and compiled before we use it.</span>
+    <span class="hljs-keyword">const</span> seededCryptoModule = <span class="hljs-keyword">await</span> SeededCryptoModulePromise;
+    <span class="hljs-comment">// To get a sealing key, you first need to derive the corresponding unsealing key.</span>
+    <span class="hljs-keyword">const</span> unsealingKey = seededCryptoModule.UnsealingKey.deriveFromSeed(
+        mySeedString, myDerivationOptionsJson
+    );
+   <span class="hljs-keyword">const</span> sealingKey = unsealingKey.getSealingKey();
+   <span class="hljs-comment">// Make sure to delete objects when you're done using them.</span>
+   unsealingKey.delete();
+   <span class="hljs-comment">// Seal a message</span>
+   <span class="hljs-keyword">const</span> packagedSealedMessage = sealingKey.seal(<span class="hljs-string">"The poodle rides at midnight."</span>);
+   sealingKey.delete();
+   <span class="hljs-comment">// Re-derive the UnsealingKey and unseal the message in one operation.</span>
+   <span class="hljs-keyword">const</span> messageAsUint8Array: <span class="hljs-built_in">Uint8Array</span> =
+     seededCryptoModule.UnsealingKey.unseal(packagedSealedMessage, mySeedString);
+   <span class="hljs-keyword">const</span> message: <span class="hljs-built_in">string</span> = <span class="hljs-keyword">new</span> TextDecoder(<span class="hljs-string">"utf-8"</span>).decode(messageAsUint8Array);
+}</code></pre>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="tsd-signature-type">DerivedSecret</span>
+					</li>
+					<li>
+						<span class="tsd-signature-type">Unsealing</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">UnsealingKey</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#derivationoptionsjson" class="tsd-kind-icon">derivation<wbr>Options<wbr>Json</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_seeded_crypto_.unsealingkey.html#sealingkeybytes" class="tsd-kind-icon">sealing<wbr>Key<wbr>Bytes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_seeded_crypto_.unsealingkey.html#unsealingkeybytes" class="tsd-kind-icon">unsealing<wbr>Key<wbr>Bytes</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#delete" class="tsd-kind-icon">delete</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_seeded_crypto_.unsealingkey.html#getsealingkey" class="tsd-kind-icon">get<wbr>Sealing<wbr>Key</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#tocustomjson" class="tsd-kind-icon">to<wbr>Custom<wbr>Json</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#tojson" class="tsd-kind-icon">to<wbr>Json</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#toserializedbinaryform" class="tsd-kind-icon">to<wbr>Serialized<wbr>Binary<wbr>Form</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#unseal" class="tsd-kind-icon">unseal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#unsealbinarypackagedsealedmessage" class="tsd-kind-icon">unseal<wbr>Binary<wbr>Packaged<wbr>Sealed<wbr>Message</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#unsealciphertext" class="tsd-kind-icon">unseal<wbr>Ciphertext</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="_seeded_crypto_.unsealingkey.html#unsealjsonpackagedsealedmessage" class="tsd-kind-icon">unseal<wbr>Json<wbr>Packaged<wbr>Sealed<wbr>Message</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="derivationoptionsjson" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> derivation<wbr>Options<wbr>Json</h3>
+					<div class="tsd-signature tsd-kind-icon">derivation<wbr>Options<wbr>Json<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_seeded_crypto_.sealingkey.html">SealingKey</a>.<a href="_seeded_crypto_.sealingkey.html#derivationoptionsjson">derivationOptionsJson</a></p>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The <code>derivationOptionsJson</code> passed as the second parameter to
+								<code>deriveFromSeed()</code> when this object was first derived from a
+								a secret seed.  Uses
+							<a href="https://dicekeys.github.io/seeded-crypto/derivation_options_format.html">JSON Derivation Options format</a>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="sealingkeybytes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> sealing<wbr>Key<wbr>Bytes</h3>
+					<div class="tsd-signature tsd-kind-icon">sealing<wbr>Key<wbr>Bytes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
+					<aside class="tsd-sources">
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The raw key bytes of the key used to seal messages,
+							kept here for use when <a href="_seeded_crypto_.unsealingkey.html#getsealingkey">getSealingKey</a> is called.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="unsealingkeybytes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> unsealing<wbr>Key<wbr>Bytes</h3>
+					<div class="tsd-signature tsd-kind-icon">unsealing<wbr>Key<wbr>Bytes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
+					<aside class="tsd-sources">
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The raw key bytes of the key used to unseal messages that were
+							previously sealed by the sealing key.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="delete" class="tsd-anchor"></a>
+					<h3>delete</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">delete<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a>.<a href="_seeded_crypto_.packagedsealedmessage.html#delete">delete</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Deletes the underlying c++ data structures from the webassembly module&#39;s memory.</p>
+								</div>
+								<p>It is important to delete objects to prevent memory leaks.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getsealingkey" class="tsd-anchor"></a>
+					<h3>get<wbr>Sealing<wbr>Key</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Sealing<wbr>Key<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_seeded_crypto_.sealingkey.html" class="tsd-signature-type">SealingKey</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_seeded_crypto_.sealingkey.html" class="tsd-signature-type">SealingKey</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="tocustomjson" class="tsd-anchor"></a>
+					<h3>to<wbr>Custom<wbr>Json</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Custom<wbr>Json<span class="tsd-signature-symbol">(</span>indent<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, indentCharCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a>.<a href="_seeded_crypto_.packagedsealedmessage.html#tocustomjson">toCustomJson</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Serialize this object into JSON format using custom indentation.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>indent: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The number of characters to indent</p>
+									</div>
+								</li>
+								<li>
+									<h5>indentCharCode: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The unicode char code to indent, which you
+											can generate by creating a one-character string followed by
+										<code>.charCodeAt(0)</code>. For tabs, that would be <code>&quot;\t&quot;.charCodeAt(0).</code></p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>This object in JSON format.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="tojson" class="tsd-anchor"></a>
+					<h3>to<wbr>Json</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Json<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a>.<a href="_seeded_crypto_.packagedsealedmessage.html#tojson">toJson</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Serialize this object into JSON format.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>This object in JSON format.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="toserializedbinaryform" class="tsd-anchor"></a>
+					<h3>to<wbr>Serialized<wbr>Binary<wbr>Form</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Serialized<wbr>Binary<wbr>Form<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a>.<a href="_seeded_crypto_.packagedsealedmessage.html#toserializedbinaryform">toSerializedBinaryForm</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Serialize this object into a binary format, which is
+									returned as a byte array.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+							<p>This object serialized into a byte array.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="unseal" class="tsd-anchor"></a>
+					<h3>unseal</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">unseal<span class="tsd-signature-symbol">(</span>packagedSealedMessage<span class="tsd-signature-symbol">: </span><a href="_seeded_crypto_.packagedsealedmessage.html" class="tsd-signature-type">PackagedSealedMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.symmetrickey.html">SymmetricKey</a>.<a href="_seeded_crypto_.symmetrickey.html#unseal">unseal</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Unseal a message that was previously sealed into a <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a> format:
+										decrypting it, verifying that the
+										message hasn&#39;t been modified*, and that, if any unsealingInstructions were been
+									provided when the message was sealed, they also haven&#39;t changed.</p>
+								</div>
+								<p>*The integrity check can prevent modifications of the ciphertext from being
+									undetected, but cannot detect if an attacker replaces the message with a
+								valid previously-sealed message.</p>
+								<dl class="tsd-comment-tags">
+									<dt>exception</dt>
+									<dd><p>CryptographicVerificationFailureException thrown if the ciphertext
+										is not valid and cannot be unsealed.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>packagedSealedMessage: <a href="_seeded_crypto_.packagedsealedmessage.html" class="tsd-signature-type">PackagedSealedMessage</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The packaged messsage to unseal.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+							<p>A byte array containing the unsealed message. If the sealed message
+							was a string, the caller will need to decode it from UTF8 format.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="unsealbinarypackagedsealedmessage" class="tsd-anchor"></a>
+					<h3>unseal<wbr>Binary<wbr>Packaged<wbr>Sealed<wbr>Message</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">unseal<wbr>Binary<wbr>Packaged<wbr>Sealed<wbr>Message<span class="tsd-signature-symbol">(</span>binaryPackagedSealedMessage<span class="tsd-signature-symbol">: </span><a href="../modules/_seeded_crypto_.html#bytearray" class="tsd-signature-type">ByteArray</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.symmetrickey.html">SymmetricKey</a>.<a href="_seeded_crypto_.symmetrickey.html#unsealbinarypackagedsealedmessage">unsealBinaryPackagedSealedMessage</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Unseal a message that was previously sealed into a <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a> and
+										coverted to binary format: restoring it from a byte array, decrypting it, verifying that the
+										message hasn&#39;t been modified*, and that, if any unsealingInstructions were been
+									provided when the message was sealed, they also haven&#39;t changed.</p>
+								</div>
+								<p>*The integrity check can prevent modifications of the ciphertext from being
+									undetected, but cannot detect if an attacker replaces the message with a
+								valid previously-sealed message.</p>
+								<dl class="tsd-comment-tags">
+									<dt>exception</dt>
+									<dd><p>CryptographicVerificationFailureException thrown if the ciphertext
+										is not valid and cannot be unsealed.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>binaryPackagedSealedMessage: <a href="../modules/_seeded_crypto_.html#bytearray" class="tsd-signature-type">ByteArray</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The packaged messsage to unseal in binary format.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+							<p>A byte array containing the unsealed message. If the sealed message
+							was a string, the caller will need to decode it from UTF8 format.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="unsealciphertext" class="tsd-anchor"></a>
+					<h3>unseal<wbr>Ciphertext</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">unseal<wbr>Ciphertext<span class="tsd-signature-symbol">(</span>ciphertext<span class="tsd-signature-symbol">: </span><a href="../modules/_seeded_crypto_.html#bytearray" class="tsd-signature-type">ByteArray</a>, unsealingInstructions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.symmetrickey.html">SymmetricKey</a>.<a href="_seeded_crypto_.symmetrickey.html#unsealciphertext">unsealCiphertext</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Unseal a previously-sealed ciphertext: decrypting it, verifying that the
+										message hasn&#39;t been modified*, and that, if any unsealingInstructions were been
+									provided when the message was sealed, they also haven&#39;t changed.</p>
+								</div>
+								<p>*The integrity check can prevent modifications of the ciphertext from being
+									undetected, but cannot detect if an attacker replaces the message with a
+								valid previously-sealed message.</p>
+								<dl class="tsd-comment-tags">
+									<dt>exception</dt>
+									<dd><p>CryptographicVerificationFailureException thrown if the ciphertext
+										is not valid and cannot be unsealed.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ciphertext: <a href="../modules/_seeded_crypto_.html#bytearray" class="tsd-signature-type">ByteArray</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The sealed message to be unsealed.</p>
+									</div>
+								</li>
+								<li>
+									<h5>unsealingInstructions: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>If this optional value was
+											set during the <code>seal</code> operation, the same value must
+										be provided to unseal the message or the operation will fail.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+							<p>A byte array containing the unsealed message. If the sealed message
+							was a string, the caller will need to decode it from UTF8 format.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="unsealjsonpackagedsealedmessage" class="tsd-anchor"></a>
+					<h3>unseal<wbr>Json<wbr>Packaged<wbr>Sealed<wbr>Message</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">unseal<wbr>Json<wbr>Packaged<wbr>Sealed<wbr>Message<span class="tsd-signature-symbol">(</span>jsonPackagedSealedMessage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_seeded_crypto_.symmetrickey.html">SymmetricKey</a>.<a href="_seeded_crypto_.symmetrickey.html#unsealjsonpackagedsealedmessage">unsealJsonPackagedSealedMessage</a></p>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Unseal a message that was previously sealed into a <a href="_seeded_crypto_.packagedsealedmessage.html">PackagedSealedMessage</a> and
+										coverted to JSON format: restoring it from JSON format, decrypting it, verifying that the
+										message hasn&#39;t been modified*, and that, if any unsealingInstructions were been
+									provided when the message was sealed, they also haven&#39;t changed.</p>
+								</div>
+								<p>*The integrity check can prevent modifications of the ciphertext from being
+									undetected, but cannot detect if an attacker replaces the message with a
+								valid previously-sealed message.</p>
+								<dl class="tsd-comment-tags">
+									<dt>exception</dt>
+									<dd><p>CryptographicVerificationFailureException thrown if the ciphertext
+										is not valid and cannot be unsealed.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>jsonPackagedSealedMessage: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The packaged messsage to unseal in JSON format.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+							<p>A byte array containing the unsealed message. If the sealed message
+							was a string, the caller will need to decode it from UTF8 format.</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_seeded_crypto_.html">&quot;seeded-<wbr>crypto&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.derivationoptionsforexpensivehashfunctions.html" class="tsd-kind-icon">Derivation<wbr>Options<wbr>For<wbr>Expensive<wbr>Hash<wbr>Functions</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.derivationoptionsforsecret.html" class="tsd-kind-icon">Derivation<wbr>Options<wbr>For<wbr>Secret</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.derivationoptionsforsigningkey.html" class="tsd-kind-icon">Derivation<wbr>Options<wbr>For<wbr>Signing<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.derivationoptionsforunsealingkey.html" class="tsd-kind-icon">Derivation<wbr>Options<wbr>For<wbr>Unsealing<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.derivationoptionsforsymmetrickey.html" class="tsd-kind-icon">Derivation<wbr>Optionsfor<wbr>Symmetric<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.packagedsealedmessage.html" class="tsd-kind-icon">Packaged<wbr>Sealed<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.packagedsealedmessagejson.html" class="tsd-kind-icon">Packaged<wbr>Sealed<wbr>Message<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.packagedsealedmessagestatic.html" class="tsd-kind-icon">Packaged<wbr>Sealed<wbr>Message<wbr>Static</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.sealingkey.html" class="tsd-kind-icon">Sealing<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.sealingkeyjson.html" class="tsd-kind-icon">Sealing<wbr>Key<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.sealingkeystatic.html" class="tsd-kind-icon">Sealing<wbr>Key<wbr>Static</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.secret.html" class="tsd-kind-icon">Secret</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.secretjson.html" class="tsd-kind-icon">Secret<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.secretstatic.html" class="tsd-kind-icon">Secret<wbr>Static</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.seededcryptomodulewithhelpers.html" class="tsd-kind-icon">Seeded<wbr>Crypto<wbr>Module<wbr>With<wbr>Helpers</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.signatureverificationkey.html" class="tsd-kind-icon">Signature<wbr>Verification<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.signatureverificationkeyjson.html" class="tsd-kind-icon">Signature<wbr>Verification<wbr>Key<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.signatureverificationkeystatic.html" class="tsd-kind-icon">Signature<wbr>Verification<wbr>Key<wbr>Static</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.signingkey.html" class="tsd-kind-icon">Signing<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.signingkeyjson.html" class="tsd-kind-icon">Signing<wbr>Key<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.signingkeystatic.html" class="tsd-kind-icon">Signing<wbr>Key<wbr>Static</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.symmetrickey.html" class="tsd-kind-icon">Symmetric<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.symmetrickeyjson.html" class="tsd-kind-icon">Symmetric<wbr>Key<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.symmetrickeystatic.html" class="tsd-kind-icon">Symmetric<wbr>Key<wbr>Static</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.unsealingkey.html" class="tsd-kind-icon">Unsealing<wbr>Key</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#derivationoptionsjson" class="tsd-kind-icon">derivation<wbr>Options<wbr>Json</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_seeded_crypto_.unsealingkey.html#sealingkeybytes" class="tsd-kind-icon">sealing<wbr>Key<wbr>Bytes</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_seeded_crypto_.unsealingkey.html#unsealingkeybytes" class="tsd-kind-icon">unsealing<wbr>Key<wbr>Bytes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#delete" class="tsd-kind-icon">delete</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_seeded_crypto_.unsealingkey.html#getsealingkey" class="tsd-kind-icon">get<wbr>Sealing<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#tocustomjson" class="tsd-kind-icon">to<wbr>Custom<wbr>Json</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#tojson" class="tsd-kind-icon">to<wbr>Json</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#toserializedbinaryform" class="tsd-kind-icon">to<wbr>Serialized<wbr>Binary<wbr>Form</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#unseal" class="tsd-kind-icon">unseal</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#unsealbinarypackagedsealedmessage" class="tsd-kind-icon">unseal<wbr>Binary<wbr>Packaged<wbr>Sealed<wbr>Message</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#unsealciphertext" class="tsd-kind-icon">unseal<wbr>Ciphertext</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_seeded_crypto_.unsealingkey.html#unsealjsonpackagedsealedmessage" class="tsd-kind-icon">unseal<wbr>Json<wbr>Packaged<wbr>Sealed<wbr>Message</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.unsealingkeyjson.html" class="tsd-kind-icon">Unsealing<wbr>Key<wbr>Json</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_seeded_crypto_.unsealingkeystatic.html" class="tsd-kind-icon">Unsealing<wbr>Key<wbr>Static</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_seeded_crypto_.html#bytearray" class="tsd-kind-icon">Byte<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_seeded_crypto_.html#bytearrayasurlsafebase64string" class="tsd-kind-icon">Byte<wbr>Array<wbr>AsUrl<wbr>Safe<wbr>Base64<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_seeded_crypto_.html#bytearrayorstring" class="tsd-kind-icon">Byte<wbr>Array<wbr>OrString</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_seeded_crypto_.html#derivationoptions" class="tsd-kind-icon">Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_seeded_crypto_.html#seededcryptomodulepromise" class="tsd-kind-icon">Seeded<wbr>Crypto<wbr>Module<wbr>Promise</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
