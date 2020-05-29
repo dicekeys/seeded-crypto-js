@@ -1,8 +1,25 @@
 {
     "name": "DiceKeys Seeded Cryptography Library for JavaScript & TypeScript",
     "readme":  "DocReadme.md",
+    "exclude": "**/tests/*",
     "disableSources": true,
     "excludeNotExported": true,
     "includeVersion": true,
-    "listInvalidSymbolLinks": true
+    "listInvalidSymbolLinks": true,
+    "categorizeByGroup": true,
+    "stripInternal": true,
+    "categoryOrder": [
+        "Module Access",
+        "Secret", 
+        "SymmetricKey", 
+        "UnsealingKey",
+        "SealingKey",
+        "SigningKey",
+        "SignatureVerificationKey",
+        "PackagedSealedMessage",
+        "DerivationOptions",
+        "JSON Serialization Format",
+        "Parameter Passing",
+        "*"
+    ]
 }
