@@ -1,6 +1,6 @@
 {
   "name": "@dicekeys/seeded-crypto-js",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "DiceKeys Seeded Cryptography Library for JavaScript and TypeScript",
   "main": "dist/seeded-crypto.js",
   "types": "dist/seeded-crypto.d.ts",
@@ -21,7 +21,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc && copyfiles --flat src/seeded-crypto-js.* dist",
-    "build-docs": "typedoc && copyfiles --flat _config.yml docs/_config.yml"
+    "build-docs": "typedoc && copyfiles --flat _config.yml docs/"
   },
   "dependencies": {
     "@dicekeys/webasm-module-memory-helper": "^1.0.3",

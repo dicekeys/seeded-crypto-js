@@ -54,7 +54,7 @@ target_compile_options(
     -g4
 )
 
-
+# Copy built webassembly javascript code into /src
 set_target_properties(
     ${SEEDED_CRYPTO_PROJECT_NAME}
     PROPERTIES
@@ -68,13 +68,20 @@ target_link_options(
     --bind
     "SHELL:-s MODULARIZE=1"
     "SHELL:-s ASSERTIONS=2"
-# Turn on after tooling has better ES6 module support, and change output name to .mjs
-#    "SHELL:-s EXPORT_ES6=1"
-#   "SHELL:-s USE_ES6_IMPORT_META=0"
-#    "SHELL:-s TOTAL_MEMORY=32MB"
+############# HERE THERE BE DRAGONS ##################################
+# Due to what Stuart believes is a bug in emscripten,
+# if you set TOTAL_MEMORY running this code in Node 10
+# will crash.
+# Fortunately, it's fine to use the default and to ALLOW_MEMORY_GROWTH
+##
+#    "SHELL:-s TOTAL_MEMORY=32MB" # UNCOMMENT AT YOUR OWN RISK
+#######################################################################
     "SHELL:-s ALLOW_MEMORY_GROWTH=1"
     "SHELL:-s SINGLE_FILE=1"
     -g4
+# Turn on after tooling has better ES6 module support, and change output name to .mjs
+#    "SHELL:-s EXPORT_ES6=1"
+#   "SHELL:-s USE_ES6_IMPORT_META=0"
 )
 
 
