@@ -9,6 +9,7 @@ describe("SymmetricKey", () => {
     const seedString = "yo";
     const derivationOptionsJson = `{"ValidJson": "This time!"}`;
     const plaintext = "perchance to SCREAM!";
+    const plaintextBuffer = Buffer.from(plaintext, 'utf-8');
     const unsealingInstructions = "run, do not walk, to the nearest cliche."
 
     test('seal and unseal with instructions', async () => {
@@ -20,6 +21,33 @@ describe("SymmetricKey", () => {
         const message = symmetricKey.sealWithInstructions(plaintext, unsealingInstructions);
         strictEqual(message.derivationOptionsJson, derivationOptionsJson);
         strictEqual(message.unsealingInstructions, unsealingInstructions);
+        const recoveredPlaintextBytes = symmetricKey.unseal(message);
+        const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        strictEqual(recoveredPlaintext, plaintext);
+        symmetricKey.delete();
+        // console.log("key as json", key.toJson());
+        // console.log("key as json", key.toCustomJson(2, "\t".charCodeAt(0)));
+        // console.log("key bytes", key.keyBytes);
+    });
+
+    test('seal and unseal using buffer', async () => {
+        var module = await SeededCryptoModulePromise;
+        var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const message = symmetricKey.sealWithInstructions(plaintextBuffer, unsealingInstructions);
+        const recoveredPlaintextBytes = symmetricKey.unseal(message);
+        const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        strictEqual(recoveredPlaintext, plaintext);
+        symmetricKey.delete();
+        // console.log("key as json", key.toJson());
+        // console.log("key as json", key.toCustomJson(2, "\t".charCodeAt(0)));
+        // console.log("key bytes", key.keyBytes);
+    });
+
+    test('seal and unseal using Uint8Array', async () => {
+        var module = await SeededCryptoModulePromise;
+        var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const plaintextUint8Array = Uint8Array.from(plaintextBuffer);
+        const message = symmetricKey.sealWithInstructions(plaintextUint8Array, unsealingInstructions);
         const recoveredPlaintextBytes = symmetricKey.unseal(message);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
         strictEqual(recoveredPlaintext, plaintext);
