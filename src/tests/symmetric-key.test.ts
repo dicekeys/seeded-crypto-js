@@ -66,7 +66,7 @@ describe("SymmetricKey", () => {
       const plaintext = Buffer.from(testMessage, 'utf-8');
       const psm = seededCryptoModule.SymmetricKey.sealWithInstructions(
         plaintext,
-        /* unsealingInstructions */ "" ?? "",
+        "",
         "A1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1t",
         derivationOptionsJson
       );
