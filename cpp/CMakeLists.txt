@@ -66,6 +66,7 @@ set_target_properties(
 target_link_options(
     ${SEEDED_CRYPTO_PROJECT_NAME} PUBLIC
     --bind
+    "SHELL:-s DISABLE_EXCEPTION_CATCHING=0"
     "SHELL:-s MODULARIZE=1"
     "SHELL:-s ASSERTIONS=2"
 ############# HERE THERE BE DRAGONS ##################################

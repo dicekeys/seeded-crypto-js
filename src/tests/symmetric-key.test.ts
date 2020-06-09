@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import {
     SeededCryptoModulePromise,
 } from "../seeded-crypto"
@@ -28,6 +31,47 @@ describe("SymmetricKey", () => {
         // console.log("key as json", key.toJson());
         // console.log("key as json", key.toCustomJson(2, "\t".charCodeAt(0)));
         // console.log("key bytes", key.keyBytes);
+    });
+
+    
+    test("Packaged sealed message to json and back", async () => {
+      var module = await SeededCryptoModulePromise;
+      var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+      const psm = symmetricKey.sealWithInstructions(plaintextBuffer, unsealingInstructions);
+      const psmJson = psm.toJson();
+      const psmCopy = module.PackagedSealedMessage.fromJson(psmJson);
+      const recoveredPlaintextBytes = symmetricKey.unseal(psmCopy);
+      const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+      strictEqual(recoveredPlaintext, plaintext);
+      symmetricKey.delete();
+    });
+
+    test("Packaged sealed message to binary and back", async () => {
+      var module = await SeededCryptoModulePromise;
+      var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+      const psm = symmetricKey.sealWithInstructions(plaintextBuffer, unsealingInstructions);
+      const psmBinary = psm.toSerializedBinaryForm();
+      const psmCopy = module.PackagedSealedMessage.fromSerializedBinaryForm(psmBinary);
+      const recoveredPlaintextBytes = symmetricKey.unseal(psmCopy);
+      const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+      strictEqual(recoveredPlaintext, plaintext);
+      symmetricKey.delete();
+    });
+
+
+    test("Failed case in api", async () => {
+      var seededCryptoModule = await SeededCryptoModulePromise;
+      const derivationOptionsJson = "{}";
+      const testMessage = "The secret ingredient is dihydrogen monoxide";
+      const plaintext = Buffer.from(testMessage, 'utf-8');
+      const psm = seededCryptoModule.SymmetricKey.sealWithInstructions(
+        plaintext,
+        /* unsealingInstructions */ "" ?? "",
+        "A1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1tA1t",
+        derivationOptionsJson
+      );
+      expect(psm.derivationOptionsJson).toBe(derivationOptionsJson);
+      psm.delete();
     });
 
     test('seal and unseal using buffer', async () => {

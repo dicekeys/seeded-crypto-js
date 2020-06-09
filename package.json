@@ -1,6 +1,6 @@
 {
   "name": "@dicekeys/seeded-crypto-js",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "DiceKeys Seeded Cryptography Library for JavaScript and TypeScript",
   "main": "dist/seeded-crypto.js",
   "types": "dist/seeded-crypto.d.ts",
@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "prepare": "tsc && copyfiles --flat src/read-seeded-js.* dist",
     "build": "tsc && copyfiles --flat src/seeded-crypto-js.* dist",
     "build-docs": "typedoc && copyfiles --flat _config.yml docs/"
   },
