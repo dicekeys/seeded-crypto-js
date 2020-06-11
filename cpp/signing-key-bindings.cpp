@@ -24,6 +24,21 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
         return toJsUint8Array(((SigningKey&)signingKey).getSignatureVerificationKeyBytes());
     })
 
+    
+    .function("toJsObject", *[](const SigningKey &signingKey)->emscripten::val{
+      auto obj = emscripten::val::object();
+      obj.set("signingKeyBytes", toJsUint8Array(signingKey.signingKeyBytes));
+      obj.set("signatureVerificationKeyBytes", toJsUint8Array(((SigningKey&)signingKey).getSignatureVerificationKeyBytes()));
+      obj.set("derivationOptionsJson", signingKey.derivationOptionsJson);
+      return obj;
+    })
+    .class_function<SigningKey>("fromJsObject", *[](const emscripten::val &jsObj)->SigningKey{
+      const SodiumBuffer signingKeyBytes = sodiumBufferFromJsTypedNumericArray(jsObj["signingKeyBytes"]);
+      const std::vector<unsigned char> signatureVerificationKeyBytes = byteVectorFromJsNumericArray(jsObj["signatureVerificationKeyBytes"]);
+      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
+      return SigningKey(signingKeyBytes, signatureVerificationKeyBytes, derivationOptionsJson);
+    })
+
     //   getSignatureVerificationKey(): SignatureVerificationKey;
     .function("getSignatureVerificationKey", *[](SigningKey& signingKey){
       return signingKey.getSignatureVerificationKey();

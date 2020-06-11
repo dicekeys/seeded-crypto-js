@@ -17,6 +17,16 @@ EMSCRIPTEN_BINDINGS(Secret) {
       [](const Secret &secret)->emscripten::val{
         return toJsUint8Array(secret.secretBytes);
     })
-  ;
+    .function("toJsObject", *[](const Secret &secret)->emscripten::val{
+      auto obj = emscripten::val::object();
+      obj.set("secretBytes", toJsUint8Array(secret.secretBytes));
+      obj.set("derivationOptionsJson", secret.derivationOptionsJson);
+      return obj;
+    })
+    .class_function<Secret>("fromJsObject", *[](const emscripten::val &jsObj)->Secret{
+      const SodiumBuffer secretBytes = sodiumBufferFromJsTypedNumericArray(jsObj["secretBytes"]);
+      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
+      return Secret(secretBytes, derivationOptionsJson);
+    });
 }
 

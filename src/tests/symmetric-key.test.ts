@@ -33,6 +33,30 @@ describe("SymmetricKey", () => {
         // console.log("key bytes", key.keyBytes);
     });
 
+    test('to and from jsobject', async () => {
+        var module = await SeededCryptoModulePromise;
+        const symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+
+        const symmetricKeyCopy = module.SymmetricKey.fromJsObject(symmetricKey.toJsObject());
+        expect(symmetricKeyCopy.derivationOptionsJson).toStrictEqual(symmetricKey.derivationOptionsJson);
+        expect(symmetricKeyCopy.keyBytes).toStrictEqual(symmetricKey.keyBytes);
+
+        symmetricKey.delete();
+    });
+
+    test('packagedSealedMessage and from jsobject', async () => {
+        var module = await SeededCryptoModulePromise;
+        const symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const psm = symmetricKey.sealWithInstructions(plaintextBuffer, unsealingInstructions);
+  
+        const psmCopy = module.PackagedSealedMessage.fromJsObject(psm.toJsObject());
+        expect(psmCopy.derivationOptionsJson).toStrictEqual(psm.derivationOptionsJson);
+        expect(psmCopy.unsealingInstructions).toStrictEqual(psm.unsealingInstructions);
+        expect(psmCopy.ciphertext).toStrictEqual(psm.ciphertext);
+
+        symmetricKey.delete();
+        psm.delete();
+    });
     
     test("Packaged sealed message to json and back", async () => {
       var module = await SeededCryptoModulePromise;

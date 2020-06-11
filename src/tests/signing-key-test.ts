@@ -2,6 +2,7 @@ import {
     SeededCryptoModulePromise,
 } from "../seeded-crypto"
 import { strictEqual } from "assert";
+import { sign } from "crypto";
 
 describe("SigningKey", () => {
 
@@ -26,6 +27,33 @@ describe("SigningKey", () => {
         signatureVerificationKey.delete();
         signingKey.delete();
     });
+
+    test('SigningKey to and from jsobject', async () => {
+        var module = await SeededCryptoModulePromise;
+        const signingKey = module.SigningKey.deriveFromSeed(seedString, derivationOptionsJson);
+
+        const signingKeyCopy = module.SigningKey.fromJsObject(signingKey.toJsObject());
+        expect(signingKeyCopy.derivationOptionsJson).toStrictEqual(signingKey.derivationOptionsJson);
+        expect(signingKeyCopy.signingKeyBytes).toStrictEqual(signingKey.signingKeyBytes);
+        expect(signingKeyCopy.signatureVerificationKeyBytes).toStrictEqual(signingKey.signatureVerificationKeyBytes);
+
+        signingKey.delete();
+    });
+
+    test('SignatureVerificationKey to and from jsobject', async () => {
+        var module = await SeededCryptoModulePromise;
+        const signingKey = module.SigningKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const signatureVerificationKey = signingKey.getSignatureVerificationKey();
+        
+        const signatureVericationKeyCopy = module.SignatureVerificationKey.fromJsObject(signatureVerificationKey.toJsObject());
+        expect(signatureVericationKeyCopy.derivationOptionsJson).toStrictEqual(signingKey.derivationOptionsJson);
+        expect(signatureVericationKeyCopy.signatureVerificationKeyBytes).toStrictEqual(signingKey.signatureVerificationKeyBytes);
+
+        signingKey.delete();
+        signatureVerificationKey.delete();
+    });
+
+
 
     test('raw sign and verify', async () => {
         var module = await SeededCryptoModulePromise;

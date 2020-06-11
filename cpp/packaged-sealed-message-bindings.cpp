@@ -33,6 +33,21 @@ EMSCRIPTEN_BINDINGS(PackagedSealedMessage) {
     .property<std::string>("unsealingInstructions", [](const PackagedSealedMessage &psm){
         return psm.unsealingInstructions;
     })
+
+    .function("toJsObject", *[](const PackagedSealedMessage &packagedSealedMessage)->emscripten::val{
+      auto obj = emscripten::val::object();
+      obj.set("ciphertext", toJsUint8Array(packagedSealedMessage.ciphertext));
+      obj.set("derivationOptionsJson", packagedSealedMessage.derivationOptionsJson);
+      obj.set("unsealingInstructions", packagedSealedMessage.unsealingInstructions);
+      return obj;
+    })
+    .class_function<PackagedSealedMessage>("fromJsObject", *[](const emscripten::val &jsObj)->PackagedSealedMessage{
+      const std::vector<unsigned char> ciphertext = byteVectorFromJsNumericArray(jsObj["ciphertext"]);
+      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
+      const std::string unsealingInstructions = jsObj["unsealingInstructions"].as<std::string>();
+      return PackagedSealedMessage(ciphertext, derivationOptionsJson, unsealingInstructions);
+    })
+
     ;
 }
 

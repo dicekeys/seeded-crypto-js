@@ -18,6 +18,18 @@ EMSCRIPTEN_BINDINGS(SealingKey) {
         return toJsUint8Array(sealingKey.sealingKeyBytes);
     })
 
+    .function("toJsObject", *[](const SealingKey &sealingKey)->emscripten::val{
+      auto obj = emscripten::val::object();
+      obj.set("sealingKeyBytes", toJsUint8Array(sealingKey.sealingKeyBytes));
+      obj.set("derivationOptionsJson", sealingKey.derivationOptionsJson);
+      return obj;
+    })
+    .class_function<SealingKey>("fromJsObject", *[](const emscripten::val &jsObj)->SealingKey{
+      const std::vector<unsigned char> sealingKeyBytes = byteVectorFromJsNumericArray(jsObj["sealingKeyBytes"]);
+      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
+      return SealingKey(sealingKeyBytes, derivationOptionsJson);
+    })
+
     //   sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
     .function("sealWithInstructions", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SealingKey::seal))
 

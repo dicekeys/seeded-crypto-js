@@ -29,6 +29,25 @@ describe("UnsealingKey", () => {
         unsealingKey.delete();
     });
 
+    test('to and from jsobject', async () => {
+        var module = await SeededCryptoModulePromise;
+        const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);
+        const sealingKey = unsealingKey.getSealingKey();
+
+        const unsealingKeyCopy = module.UnsealingKey.fromJsObject(unsealingKey.toJsObject());
+        expect(unsealingKeyCopy.derivationOptionsJson).toStrictEqual(unsealingKey.derivationOptionsJson);
+        expect(unsealingKeyCopy.unsealingKeyBytes).toStrictEqual(unsealingKey.unsealingKeyBytes);
+        expect(unsealingKeyCopy.sealingKeyBytes).toStrictEqual(unsealingKey.sealingKeyBytes);
+
+        const sealingKeyCopy = module.SealingKey.fromJsObject(sealingKey.toJsObject());
+        expect(sealingKeyCopy.derivationOptionsJson).toStrictEqual(unsealingKey.derivationOptionsJson);
+        expect(sealingKeyCopy.sealingKeyBytes).toStrictEqual(unsealingKey.sealingKeyBytes);
+
+        unsealingKey.delete();
+        sealingKey.delete();
+    });
+
+
     test('seal without instructions and unseal', async () => {
         var module = await SeededCryptoModulePromise;
         const unsealingKey = module.UnsealingKey.deriveFromSeed(seedString, derivationOptionsJson);

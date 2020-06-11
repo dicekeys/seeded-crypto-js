@@ -35,6 +35,18 @@ describe("Secret", () => {
         expect(copy.secretBytes).toEqual(secret.secretBytes);
         secret.delete();
     });
+    
+    test('to and from jsobject', async () => {
+        var module = await SeededCryptoModulePromise;
+        const secret = module.Secret.deriveFromSeed(seedString, derivationOptionsJson);
+        const jsObject = secret.toJsObject();
+        console.log("Constructed the object:", jsObject)
+        const copy = module.Secret.fromJsObject(jsObject);
+        expect(copy.derivationOptionsJson).toEqual(secret.derivationOptionsJson);
+        expect(copy.secretBytes).toEqual(secret.secretBytes);
+        secret.delete();
+    });
+
 
     test('to and from custom json', async () => {
         var module = await SeededCryptoModulePromise;

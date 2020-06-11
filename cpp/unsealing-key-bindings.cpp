@@ -24,6 +24,20 @@ EMSCRIPTEN_BINDINGS(UnsealingKey) {
         return toJsUint8Array(UnsealingKey.unsealingKeyBytes);
     })
 
+    .function("toJsObject", *[](const UnsealingKey &unsealingKey)->emscripten::val{
+      auto obj = emscripten::val::object();
+      obj.set("unsealingKeyBytes", toJsUint8Array(unsealingKey.unsealingKeyBytes));
+      obj.set("sealingKeyBytes", toJsUint8Array(unsealingKey.sealingKeyBytes));
+      obj.set("derivationOptionsJson", unsealingKey.derivationOptionsJson);
+      return obj;
+    })
+    .class_function<UnsealingKey>("fromJsObject", *[](const emscripten::val &jsObj)->UnsealingKey{
+      const SodiumBuffer unsealingKeyBytes = sodiumBufferFromJsTypedNumericArray(jsObj["unsealingKeyBytes"]);
+      const std::vector<unsigned char> sealingKeyBytes = byteVectorFromJsNumericArray(jsObj["sealingKeyBytes"]);
+      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
+      return UnsealingKey(unsealingKeyBytes, sealingKeyBytes, derivationOptionsJson);
+    })
+
     // static  unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;
     .class_function<emscripten::val>(
       "unseal",*[](
