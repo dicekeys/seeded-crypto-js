@@ -562,7 +562,7 @@ export interface PackagedSealedMessageStatic extends
     new(ciphertext: ByteArray, derivationOptionsJson: string, unsealingInstructions: string): PackagedSealedMessage;
 }
 
-interface PackagedSealedMessagFields {
+export interface PackagedSealedMessagFields {
     /**
      * The encrypted contents of the message
      */
@@ -628,7 +628,7 @@ export interface PackagedSealedMessageJson {
  */
 export interface SealingKeyStatic extends DerivableFromSeed<SealingKeyFields, SealingKey> {}
 
-interface SealingKeyFields extends DerivedSecretFields {
+export interface SealingKeyFields extends DerivedSecretFields {
     /**
      * The raw key bytes of the sealing key.
      */
@@ -765,7 +765,7 @@ export interface SecretJson extends DerivedSecretJson {
  */
 export interface SignatureVerificationKeyStatic extends
     DerivableFromSeed<SignatureVerificationKeyFields, SignatureVerificationKey> {}
-interface SignatureVerificationKeyFields {
+export interface SignatureVerificationKeyFields extends DerivedSecretFields {
     /**
      * The raw key bytes used to verify signatures.
      */
@@ -831,7 +831,7 @@ export interface SignatureVerificationKeyJson extends DerivedSecretJson {
 export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, SigningKey> {
     generateSignature(message: ByteArrayOrString, seedString: string, derivationOptionsJson: string): Uint8Array;
 }
-interface SigningKeyFields extends SignatureVerificationKeyFields {
+export interface SigningKeyFields extends SignatureVerificationKeyFields {
     /**
      * The raw key bytes used to generate signatures.
      */
@@ -963,7 +963,7 @@ export interface SigningKeyJson extends DerivedSecretJson {
 export interface SymmetricKeyStatic extends
     DerivableFromSeed<SymmetricKeyFields, SymmetricKey>,
     StaticSealingAndUnsealing {}
-interface SymmetricKeyFields {
+export interface SymmetricKeyFields extends DerivedSecretFields {
     /**
      * The raw symmetric key bytes used to seal and unseal messages.
      */
@@ -1060,7 +1060,7 @@ export interface UnsealingKeyStatic extends
     DerivableFromSeed<UnsealingKeyFields, UnsealingKey>,
     StaticSealingAndUnsealing
 {}
-interface UnsealingKeyFields extends SealingKeyFields {
+export interface UnsealingKeyFields extends SealingKeyFields {
     /**
      * The raw key bytes of the key used to unseal messages that were
      * previously sealed by the sealing key.
