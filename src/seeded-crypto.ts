@@ -554,7 +554,7 @@ interface StaticSealingAndUnsealing {
  * @category PackagedSealedMessage
  */
 export interface PackagedSealedMessageStatic extends
-    SeededCryptoSerializableObjectStatics<PackagedSealedMessagFields, PackagedSealedMessage>
+    SeededCryptoSerializableObjectStatics<PackagedSealedMessageFields, PackagedSealedMessage>
 {
     /**
      * Construct a new PackagedSealedMessage from its three members. 
@@ -562,7 +562,7 @@ export interface PackagedSealedMessageStatic extends
     new(ciphertext: ByteArray, derivationOptionsJson: string, unsealingInstructions: string): PackagedSealedMessage;
 }
 
-export interface PackagedSealedMessagFields {
+export interface PackagedSealedMessageFields {
     /**
      * The encrypted contents of the message
      */
@@ -593,7 +593,7 @@ export interface PackagedSealedMessagFields {
  * 
  * @category PackagedSealedMessage
  */
-export interface PackagedSealedMessage extends PackagedSealedMessagFields, SeededCryptoSerializableObject<PackagedSealedMessagFields> {
+export interface PackagedSealedMessage extends PackagedSealedMessageFields, SeededCryptoSerializableObject<PackagedSealedMessageFields> {
 }
 
 /**
