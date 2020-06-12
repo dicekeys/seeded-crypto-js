@@ -4,9 +4,18 @@ import {
   getWebAsmModulePromiseWithAugmentedTypes,
   TypedMemoryHelpersForEmscriptenModule
 } from  "@dicekeys/webasm-module-memory-helper"
-import { SerializationType } from "child_process";
+import {
+    PackagedSealedMessageFields,
+    DerivedSecretFields,
+    SealingKeyFields,
+    SecretFields,
+    SignatureVerificationKeyFields,
+    SigningKeyFields,
+    UnsealingKeyFields,
+    SymmetricKeyFields,
+} from "./seeded-crypto-object-fields";
 
-
+export * from "./seeded-crypto-object-fields";
 /**
  * The subset of [[DerivationOptions]] specific to hash functions designed to be computionally expensive
  * and consume memory in order to slow brute-force guessing attacks, including
@@ -284,15 +293,7 @@ interface SeededCryptoSerializableObject<JsObjectFields> extends ExplicitDelete 
      */
     toJsObject(): JsObjectFields
 }
-interface DerivedSecretFields {
-    /**
-     * The `derivationOptionsJson` passed as the second parameter to
-     * `deriveFromSeed()` when this object was first derived from a
-     * a secret seed.  Uses
-     * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
-     */
-    readonly derivationOptionsJson: string;    
-}
+
 interface DerivedSecret<Fields> extends SeededCryptoSerializableObject<Fields>, DerivedSecretFields {}
 
 interface DerivedSecretJson {
@@ -562,24 +563,7 @@ export interface PackagedSealedMessageStatic extends
     new(ciphertext: ByteArray, derivationOptionsJson: string, unsealingInstructions: string): PackagedSealedMessage;
 }
 
-export interface PackagedSealedMessageFields {
-    /**
-     * The encrypted contents of the message
-     */
-    readonly ciphertext: Uint8Array;
-    /**
-     * The derivation options used to derive the key used to seal the message, and
-     * which can be used to re-derive the key needed to unseal it.
-     */
-    readonly derivationOptionsJson: string;
-    /**
-     * Any unsealing instructions that parties able to unseal the message should be
-     * aware of.  These are stored in plaintext and are meant to be readable by
-     * anyone with a copy of the message.  However, the message cannot be unsealed
-     * if these instructions have been modified.
-     */
-    readonly unsealingInstructions: string;
-}
+
 /**
  * When a message is sealed, the ciphertext is packaged with the derivationOptionsJson
  * used to derive the key needed to unseal the message, as well as any optional
@@ -628,12 +612,6 @@ export interface PackagedSealedMessageJson {
  */
 export interface SealingKeyStatic extends DerivableFromSeed<SealingKeyFields, SealingKey> {}
 
-export interface SealingKeyFields extends DerivedSecretFields {
-    /**
-     * The raw key bytes of the sealing key.
-     */
-    readonly sealingKeyBytes: Uint8Array;
-}
 /**
  * A SealingKey is used to _seal_ messages, in combination with a
  * [[UnsealingKey]] which can _unseal_ them.
@@ -695,12 +673,7 @@ export interface SealingKeyJson extends DerivedSecretJson {
  */
 export interface SecretStatic extends DerivableFromSeed<SecretFields, Secret> {
 }
-export interface SecretFields extends DerivedSecretFields {
-    /**
-     * The array of bytes that constitutes the derived secret.
-     */
-    readonly secretBytes: Uint8Array;
-}
+
 /**
  * A secret derived from another secret, in the form of a seed string, 
  * and set of derivation options specified ([[derivationOptionsJson]]) using the
@@ -765,12 +738,7 @@ export interface SecretJson extends DerivedSecretJson {
  */
 export interface SignatureVerificationKeyStatic extends
     DerivableFromSeed<SignatureVerificationKeyFields, SignatureVerificationKey> {}
-export interface SignatureVerificationKeyFields extends DerivedSecretFields {
-    /**
-     * The raw key bytes used to verify signatures.
-     */
-    readonly signatureVerificationKeyBytes: Uint8Array;
-}
+
 /**
  * A SignatureVerificationKey is used to verify that messages were
  * signed by its corresponding SigningKey.
@@ -831,12 +799,7 @@ export interface SignatureVerificationKeyJson extends DerivedSecretJson {
 export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, SigningKey> {
     generateSignature(message: ByteArrayOrString, seedString: string, derivationOptionsJson: string): Uint8Array;
 }
-export interface SigningKeyFields extends SignatureVerificationKeyFields {
-    /**
-     * The raw key bytes used to generate signatures.
-     */
-    readonly signingKeyBytes: Uint8Array;
-}
+
 /**
  * A SigningKey generates _signatures_ of messages which can then be
  * used by the corresponding SignatureVerificationKey to verify that a message
@@ -963,12 +926,7 @@ export interface SigningKeyJson extends DerivedSecretJson {
 export interface SymmetricKeyStatic extends
     DerivableFromSeed<SymmetricKeyFields, SymmetricKey>,
     StaticSealingAndUnsealing {}
-export interface SymmetricKeyFields extends DerivedSecretFields {
-    /**
-     * The raw symmetric key bytes used to seal and unseal messages.
-     */
-    readonly keyBytes: Uint8Array;
-}
+
 /**
  * A SymmetricKey can be used to seal and unseal messages.
  * This SymmetricKey class can be (re) derived from a seed using
@@ -1060,13 +1018,7 @@ export interface UnsealingKeyStatic extends
     DerivableFromSeed<UnsealingKeyFields, UnsealingKey>,
     StaticSealingAndUnsealing
 {}
-export interface UnsealingKeyFields extends SealingKeyFields {
-    /**
-     * The raw key bytes of the key used to unseal messages that were
-     * previously sealed by the sealing key.
-     */
-    readonly unsealingKeyBytes: Uint8Array;
-}
+
 /**
  * An UnsealingKey is used to _unseal_ messages sealed with its
  * corresponding [[SealingKey]].
