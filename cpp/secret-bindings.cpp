@@ -17,6 +17,7 @@ EMSCRIPTEN_BINDINGS(Secret) {
       [](const Secret &secret)->emscripten::val{
         return toJsUint8Array(secret.secretBytes);
     })
+    // JSObject serialzition
     .function("toJsObject", *[](const Secret &secret)->emscripten::val{
       auto obj = emscripten::val::object();
       obj.set("secretBytes", toJsUint8Array(secret.secretBytes));

@@ -1087,8 +1087,16 @@ export interface UnsealingKeyJson extends DerivedSecretJson {
     unsealingKeyBytes: ByteArrayAsUrlSafeBase64String;
 }
 
+interface DerivationOptionsStatic {
+    derivePrimarySecret(seedString: string, derivationOptionsJson: string): Uint8Array;
+}
+
 
 interface SeededCryptoModule extends EmscriptenModule {
+    /**
+     * @category SeededCryptoModule
+     */
+    DerivationOptions: DerivationOptionsStatic;
     /**
      * @category SeededCryptoModule
      */
