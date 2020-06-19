@@ -9,6 +9,7 @@ project(${SEEDED_CRYPTO_PROJECT_NAME}
     LANGUAGES CXX
 )
 
+set(SEEDED_CRYPTO_BUILD_DOC OFF)
 add_subdirectory("seeded-crypto")
 
 # Gather all the source files
@@ -53,6 +54,7 @@ target_compile_options(
     -O3
     -g4
 )
+
 
 # Copy built webassembly javascript code into /src
 set_target_properties(
