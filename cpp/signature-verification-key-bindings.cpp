@@ -27,8 +27,13 @@ EMSCRIPTEN_BINDINGS(SignatureVerificationKey) {
       const std::vector<unsigned char> signatureVerificationKeyBytes = byteVectorFromJsNumericArray(jsObj["signatureVerificationKeyBytes"]);
       const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
       return SignatureVerificationKey(signatureVerificationKeyBytes, derivationOptionsJson);
+    })    
+    .class_function<SignatureVerificationKey>("deriveFromSeed", *[](
+      const std::string &seedString,
+      const std::string& derivationOptionsJson
+    )->SignatureVerificationKey{
+      return SigningKey::deriveFromSeed(seedString,derivationOptionsJson).getSignatureVerificationKey();
     })
-
     //   verify(message: BindableToString, signature: TypedByteArray): boolean;
     .function("verify", *[](const SignatureVerificationKey& signatureVerificationKey,
         const std::string &message,

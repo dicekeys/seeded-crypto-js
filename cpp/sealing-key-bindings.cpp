@@ -29,6 +29,12 @@ EMSCRIPTEN_BINDINGS(SealingKey) {
       const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
       return SealingKey(sealingKeyBytes, derivationOptionsJson);
     })
+    .class_function<SealingKey>("deriveFromSeed", *[](
+      const std::string &seedString,
+      const std::string& derivationOptionsJson
+    )->SealingKey{
+      return UnsealingKey::deriveFromSeed(seedString,derivationOptionsJson).getSealingKey();
+    })
 
     //   sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;
     .function("sealWithInstructions", emscripten::select_overload<const PackagedSealedMessage(const std::string&, const std::string&)const>(&SealingKey::seal))
