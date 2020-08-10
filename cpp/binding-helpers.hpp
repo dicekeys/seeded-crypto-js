@@ -5,16 +5,17 @@
 #include <vector>
 
 template<typename T>
-inline std::vector<T> vectorFromJsTypedNumericArray(const emscripten::val &typedArray)
+inline std::vector<T> vectorFromJsTypedNumericArray(const emscripten::val &typedArrayInJsHeap)
 {
   const unsigned int length = typedArray["length"].as<unsigned int>();
   const unsigned int bytesPerElement = typedArray["BYTES_PER_ELEMENT"].as<unsigned int>();
   const unsigned int lengthInBytes = bytesPerElement * length;
-  const emscripten::val heap = emscripten::val::module_property("HEAPU8");
-  const emscripten::val memory = heap["buffer"];
-  std::vector<T> vec(lengthInBytes / sizeof(T));
-  const emscripten::val memoryView = typedArray["constructor"].new_(memory, reinterpret_cast<uintptr_t>(vec.data()), length);
-  memoryView.call<void>("set", typedArray);
+  const unsigned int lengthInUnitsOfT = lengthInBytes / sizeof(T);
+  const unsigned int length = typedArrayInJsHeap["length"].as<unsigned int>();
+  std::vector<T> vec;
+  vec.resize(length);
+  const emscripten::val typeArrayInCppHeap{emscripten::typed_memory_view(lengthInBytes, vec.data())};
+  typeArrayInCppHeap.call<void>("set", typedArrayInJsHeap);
   return vec;
 }
 
