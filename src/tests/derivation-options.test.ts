@@ -1,7 +1,6 @@
 import {
     SeededCryptoModulePromise,
 } from "../seeded-crypto"
-import { strictEqual, notEqual } from "assert";
 
 describe("DerivationOptions", () => {
 

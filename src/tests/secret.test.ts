@@ -1,7 +1,7 @@
 import {
     SeededCryptoModulePromise,
 } from "../seeded-crypto"
-import { strictEqual, notEqual } from "assert";
+import { strictEqual, notStrictEqual } from "assert";
 
 describe("Secret", () => {
 
@@ -67,7 +67,16 @@ describe("Secret", () => {
                 "lengthInBytes": 64
             }
         `.trim());
-        notEqual(secret, oldSecret);
+        notStrictEqual(secret, oldSecret);
+    });
+
+    test('matches c++', async () => {
+        var module = await SeededCryptoModulePromise;
+        const passwordObj = module.Password.deriveFromSeed(
+            "A1tB2rC3bD4lE5tF6bG1tH1tI1tJ1tK1tL1tM1tN1tO1tP1tR1tS1tT1tU1tV1tW1tX1tY1tZ1t", "{}"
+        );
+        const password = passwordObj.password();
+        expect(password).toBe("15-Slick-Tabby-Squad-Chest-Evoke-Judge-Petri-Snide-Affix-Savor-Plaza-Dove-Crust-Poise-Thigh");
     });
 
 

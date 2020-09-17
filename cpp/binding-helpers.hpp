@@ -7,11 +7,9 @@
 template<typename T>
 inline std::vector<T> vectorFromJsTypedNumericArray(const emscripten::val &typedArrayInJsHeap)
 {
-  const unsigned int length = typedArray["length"].as<unsigned int>();
-  const unsigned int bytesPerElement = typedArray["BYTES_PER_ELEMENT"].as<unsigned int>();
-  const unsigned int lengthInBytes = bytesPerElement * length;
-  const unsigned int lengthInUnitsOfT = lengthInBytes / sizeof(T);
   const unsigned int length = typedArrayInJsHeap["length"].as<unsigned int>();
+  const unsigned int bytesPerElement = typedArrayInJsHeap["BYTES_PER_ELEMENT"].as<unsigned int>();
+  const unsigned int lengthInBytes = bytesPerElement * length;
   std::vector<T> vec;
   vec.resize(length);
   const emscripten::val typeArrayInCppHeap{emscripten::typed_memory_view(lengthInBytes, vec.data())};
