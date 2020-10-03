@@ -75,8 +75,8 @@ describe("Secret", () => {
         const passwordObj = module.Password.deriveFromSeed(
             "A1tB2rC3bD4lE5tF6bG1tH1tI1tJ1tK1tL1tM1tN1tO1tP1tR1tS1tT1tU1tV1tW1tX1tY1tZ1t", "{}"
         );
-        const password = passwordObj.password();
-        expect(password).toBe("15-Slick-Tabby-Squad-Chest-Evoke-Judge-Petri-Snide-Affix-Savor-Plaza-Dove-Crust-Poise-Thigh");
+        const password = passwordObj.password;
+        expect(password).toBe("15-Unwed-agent-genre-stump-could-limit-shrug-shout-udder-bring-koala-essay-plaza-chaos-clerk");
     });
 
 

@@ -31,7 +31,7 @@ export interface PasswordFields extends DerivedSecretFields {
   /**
    * The array of bytes that constitutes the derived secret.
    */
-  readonly secretBytes: Uint8Array;
+  readonly password: string;
 }
 
 

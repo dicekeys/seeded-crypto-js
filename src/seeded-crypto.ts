@@ -613,6 +613,22 @@ export interface PackagedSealedMessageJson {
  * @category Password
  */
 export interface PasswordStatic extends DerivableFromSeed<PasswordFields, Password> {
+    /**
+     * Derive this object from a seed string and a set of derivation options.
+     * 
+     * @param seedString The secret seed, such as a password, DiceKey, or
+     * key stored elsewhere.
+     * @param derivationOptionsJson Derivation options specified using the
+     * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
+     * 
+     * @returns The derived object, which **you must delete manually** by
+     * calling its [[delete]] method to avoid memory leaks.  That's because
+     * derived objects are stored within the WebAssembly module
+     * and are not automatically garbage collected by the JavaScript runtime.
+     *
+     */
+    deriveFromSeedAndWordList(seedString: string, derivationOptionsJson: string, wordListAsSingleString?: string): Password;
+} {
 }
 
 /**
@@ -635,10 +651,8 @@ export interface PasswordStatic extends DerivableFromSeed<PasswordFields, Passwo
  * 
  * @category Password
  */
-export interface Password extends DerivedSecret<SecretFields>, SecretFields
-{
-    password(): string;
-}
+export interface Password extends DerivedSecret<PasswordFields>, PasswordFields
+{}
 
    
 
@@ -649,10 +663,9 @@ export interface Password extends DerivedSecret<SecretFields>, SecretFields
  */
 export interface PasswordJson extends DerivedSecretJson {
     /**
-     * The array of bytes that constitutes the derived secret,
-     * encoded to URL-safe Base64 per [RFC 4648 Section 5](https://tools.ietf.org/html/rfc4648#section-5).
+     * The derived password.
      */
-    secretBytes: ByteArrayAsUrlSafeBase64String;
+    password: string;
 }
 
 
