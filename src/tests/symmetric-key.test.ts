@@ -223,5 +223,24 @@ describe("SymmetricKey", () => {
         strictEqual(recoveredPlaintext, plaintext);
     });
 
+    test('seal empty plaintext', async () => {
+      var module = await SeededCryptoModulePromise;
+      var symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+      const emptyPlaintextUint8Array = Uint8Array.from([]);
+      try {
+        symmetricKey.sealWithInstructions(emptyPlaintextUint8Array, unsealingInstructions);
+      } catch (e) {
+        if (typeof e === "number") {
+          const message = module.getExceptionMessage(e);
+          console.log("Message", message);
+          if (typeof message !== "string" || message.toLocaleLowerCase().indexOf("invalid") === -1) {
+            throw new Error(message);
+          }
+        } else {
+          throw (e);
+        }
+      }
+      expect(() => symmetricKey.sealWithInstructions(emptyPlaintextUint8Array, unsealingInstructions)).toThrow();
+    });
 
 });

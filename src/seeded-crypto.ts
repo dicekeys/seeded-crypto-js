@@ -1157,6 +1157,7 @@ interface DerivationOptionsStatic {
 
 
 interface SeededCryptoModule extends EmscriptenModule {
+    getExceptionMessage(exceptionPtr: number): string
     /**
      * @category SeededCryptoModule
      */
