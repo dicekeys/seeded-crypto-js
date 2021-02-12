@@ -8,9 +8,11 @@ setenv EMSDK <path_to_emsdk>
 ```
 
 ```bash
-cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE="$env:emsdk\upstream\emscripten\cmake\Modules\Platform\Emscripten.cmake" -S cpp -B build
+## Windows
+cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE="$env:emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -S cpp -B build
+## Bash
+cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE="$emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -S cpp -B build
 cd build; ninja; cd ..
-
 ```
 
 Still need to manually compile OpenCV
