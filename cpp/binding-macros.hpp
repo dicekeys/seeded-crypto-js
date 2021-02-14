@@ -23,6 +23,8 @@
 
 #define AddIndirectlyDerivable(CLASSTYPE) \
   .property<std::string>("derivationOptionsJson", *[] \
+  (const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; }) \
+  .property<std::string>("recipeJson", *[] \
   (const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; })
 
 

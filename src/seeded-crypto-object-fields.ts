@@ -25,6 +25,7 @@ export interface DerivedSecretFields {
    * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
    */
   readonly derivationOptionsJson: string;    
+  readonly recipeJson: string;    
 }
 
 export interface PasswordFields extends DerivedSecretFields {

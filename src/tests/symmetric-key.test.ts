@@ -202,6 +202,7 @@ describe("SymmetricKey", () => {
         const message = symmetricKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = symmetricKey.unsealBinaryPackagedSealedMessage(message.toSerializedBinaryForm());
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        expect(recoveredPlaintext).toStrictEqual(plaintext);
         strictEqual(recoveredPlaintext, plaintext);
     });
 
@@ -212,6 +213,7 @@ describe("SymmetricKey", () => {
         const message = symmetricKey.sealWithInstructions(plaintext, unsealingInstructions);
         const recoveredPlaintextBytes = module.SymmetricKey.unsealJsonPackagedSealedMessage(message.toJson(), seedString);
         const recoveredPlaintext = new TextDecoder("utf-8").decode(recoveredPlaintextBytes);
+        expect(recoveredPlaintext).toStrictEqual(plaintext);
         strictEqual(recoveredPlaintext, plaintext);
     });
 
@@ -232,7 +234,7 @@ describe("SymmetricKey", () => {
       } catch (e) {
         if (typeof e === "number") {
           const message = module.getExceptionMessage(e);
-          console.log("Message", message);
+          // console.log("Message", message);
           if (typeof message !== "string" || message.toLocaleLowerCase().indexOf("invalid") === -1) {
             throw new Error(message);
           }
