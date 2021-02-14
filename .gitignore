@@ -12,3 +12,4 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 cpp/CMakeCache.txt
+cpp/CMakeFiles/cmake.check_cache

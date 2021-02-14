@@ -27,16 +27,16 @@ describe("Secret", () => {
         secret.delete();
     });
 
-    test('Secret.derivationOptionsJson renamed Secret.recipeJson', async () => {
+    test('Secret.derivationOptionsJson renamed Secret.recipe', async () => {
         var module = await SeededCryptoModulePromise;
         const secret = module.Secret.deriveFromSeed(seedString, derivationOptionsJson);
         expect(secret.derivationOptionsJson).toEqual(derivationOptionsJson);
-        expect(secret.recipeJson).toEqual(derivationOptionsJson);
+        expect(secret.recipe).toEqual(derivationOptionsJson);
         const json = secret.toJson();
-        const jsonObj = (JSON.parse(json) as {recipeJson?: String})
-        expect (jsonObj.recipeJson).toEqual(derivationOptionsJson)
+        const jsonObj = (JSON.parse(json) as {recipe?: String})
+        expect (jsonObj.recipe).toEqual(derivationOptionsJson)
         const reconstituted = module.Secret.fromJson(json)
-        expect (reconstituted.recipeJson).toEqual(secret.recipeJson)
+        expect (reconstituted.recipe).toEqual(secret.recipe)
 
     });
 
