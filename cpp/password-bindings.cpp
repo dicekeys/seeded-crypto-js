@@ -19,13 +19,13 @@ EMSCRIPTEN_BINDINGS(Password) {
     .function("toJsObject", *[](const Password &password)->emscripten::val{
       auto obj = emscripten::val::object();
       obj.set("password", password.password);
-      obj.set("derivationOptionsJson", password.derivationOptionsJson);
+      obj.set("recipe", password.recipe);
       return obj;
     })
     .class_function<Password>("fromJsObject", *[](const emscripten::val &jsObj)->Password{
       const std::string password = jsObj["password"].as<std::string>();
-      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
-      return Password(password, derivationOptionsJson);
+      const std::string recipe = jsObj["recipe"].as<std::string>();
+      return Password(password, recipe);
     });
 }
 

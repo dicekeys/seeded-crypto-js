@@ -18,13 +18,13 @@ import {
 
 export * from "./seeded-crypto-object-fields";
 /**
- * The subset of [[DerivationOptions]] specific to hash functions designed to be computationally expensive
+ * The subset of [[Recipe]] specific to hash functions designed to be computationally expensive
  * and consume memory in order to slow brute-force guessing attacks, including
  * those attacks that might utilize specially-designed hardware.
  * 
- * @category DerivationOptions
+ * @category Recipe
  */
-export interface DerivationOptionsForExpensiveHashFunctions {
+export interface RecipeForExpensiveHashFunctions {
     hashFunction: "Argon2id" | "Scrypt";
     /**
      * The  amount of memory that Argon2id or Scrypt
@@ -58,7 +58,7 @@ export interface DerivationOptionsForExpensiveHashFunctions {
     hashFunctionMemoryPasses?: number;
   }
 
-  interface DerivationOptionsFor {
+  interface RecipeFor {
     type?: "Secret" | "SigningKey" | "SymmetricKey" | "UnsealingKey";
     /**
      * The cryptographic hash function used to derive an object
@@ -68,11 +68,11 @@ export interface DerivationOptionsForExpensiveHashFunctions {
   }
   
   /**
-   * The subset of [[DerivationOptions]] specific to a [[Secret]].
+   * The subset of [[Recipe]] specific to a [[Secret]].
    * 
-   * @category DerivationOptions
+   * @category Recipe
    */
-  export interface DerivationOptionsForSecret extends DerivationOptionsFor {
+  export interface RecipeForSecret extends RecipeFor {
     /**
      * Setting this optional value ensures these options can only be used to
      * derive a [[Secret]], and not any other type of derived object.
@@ -86,11 +86,11 @@ export interface DerivationOptionsForExpensiveHashFunctions {
   };
   
   /**
-   * The subset of [[DerivationOptions]] specific to a [[SymmetricKey]].
+   * The subset of [[Recipe]] specific to a [[SymmetricKey]].
    * 
-   * @category DerivationOptions
+   * @category Recipe
    */
-  export interface DerivationOptionsForSymmetricKey extends DerivationOptionsFor {
+  export interface RecipeForSymmetricKey extends RecipeFor {
     /**
      * Setting this optional value ensures these options can only be used to
      * derive a [[SymmetricKey]], and not any other type of derived object.
@@ -104,11 +104,11 @@ export interface DerivationOptionsForExpensiveHashFunctions {
   };
   
   /**
-   * The subset of [[DerivationOptions]] specific to an [[UnsealingKey]].
+   * The subset of [[Recipe]] specific to an [[UnsealingKey]].
    * 
-   * @category DerivationOptions
+   * @category Recipe
    */
-  export interface DerivationOptionsForUnsealingKey extends DerivationOptionsFor {
+  export interface RecipeForUnsealingKey extends RecipeFor {
     /**
      * Setting this optional value ensures these options can only be used to
      * derive a [[UnsealingKey]] and its corresponding [[SealingKey]],
@@ -123,11 +123,11 @@ export interface DerivationOptionsForExpensiveHashFunctions {
   };
   
   /**
-   * The subset of [[DerivationOptions]] specific to a [[SigningKey]].
+   * The subset of [[Recipe]] specific to a [[SigningKey]].
    * 
-   * @category DerivationOptions
+   * @category Recipe
    */
-  export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
+  export interface RecipeForSigningKey extends RecipeFor {
     /**
      * Setting this optional value ensures these options can only be used to
      * derive a [[SigningKey]] and its corresponding [[SignatureVerificationKey]],
@@ -143,22 +143,22 @@ export interface DerivationOptionsForExpensiveHashFunctions {
   
   
   /**
-   * The DerivationOptions used by the Seeded Crypto library
+   * The Recipe used by the Seeded Crypto library
    * and which implement the portion of the
    * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
    * that are interpreted by this library.
    * 
    * (Other options may appear in layers above that library.)
    * 
-   * @category DerivationOptions
+   * @category Recipe
    */
-  export type DerivationOptions = (
-    DerivationOptionsForSecret |
-    DerivationOptionsForSymmetricKey |
-    DerivationOptionsForUnsealingKey |
-    DerivationOptionsForSigningKey
+  export type Recipe = (
+    RecipeForSecret |
+    RecipeForSymmetricKey |
+    RecipeForUnsealingKey |
+    RecipeForSigningKey
   ) & (
-    DerivationOptionsForExpensiveHashFunctions |
+    RecipeForExpensiveHashFunctions |
     {}
   ) ;
   
@@ -245,7 +245,7 @@ interface DerivableFromSeed<JsObjectFields, T> extends SeededCryptoSerializableO
      * 
      * @param seedString The secret seed, such as a password, DiceKey, or
      * key stored elsewhere.
-     * @param derivationOptionsJson Derivation options specified using the
+     * @param recipe Derivation options specified using the
      * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
      * 
      * @returns The derived object, which **you must delete manually** by
@@ -254,7 +254,7 @@ interface DerivableFromSeed<JsObjectFields, T> extends SeededCryptoSerializableO
      * and are not automatically garbage collected by the JavaScript runtime.
      *
      */
-    deriveFromSeed(seedString: string, derivationOptionsJson: string): T;
+    deriveFromSeed(seedString: string, recipe: string): T;
 }
 
 interface SeededCryptoSerializableObject<JsObjectFields> extends ExplicitDelete {
@@ -302,7 +302,7 @@ interface DerivedSecretJson {
      * The options used to derive a secret or key, specified using the
      * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
      */
-    derivationOptionsJson: string;
+    recipe: string;
 }
 
 
@@ -458,13 +458,13 @@ interface StaticSealingAndUnsealing {
      * 
      * @param message The plaintext message to seal
      * @param seedString The secret seed used to generate the key.
-     * @param derivationOptionsJson The options used to derive the key, specified using the
+     * @param recipe The options used to derive the key, specified using the
      * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
      * @return A PackageSealedMessage containing the sealed ciphertext, the derivation options
      * (in plaintext) needed to (re)derive the key to unseal the ciphertext, and no
      * unsealingInstructions.
      */
-    seal(message: ByteArrayOrString, seedString: string, derivationOptionsJson: string): PackagedSealedMessage;
+    seal(message: ByteArrayOrString, seedString: string, recipe: string): PackagedSealedMessage;
 
     /**
      * Seal a plaintext message by first deriving the required key and then performing the seal operation.
@@ -475,13 +475,13 @@ interface StaticSealingAndUnsealing {
      * for whom.  The instructions will be packaged along with the sealed message, but will be
      * stored in plaintext and readable by anyone with a copy of the resulting PackagedSealedMessage.
      * @param seedString The secret seed used to generate the key.
-     * @param derivationOptionsJson The options used to derive the key, specified using the
+     * @param recipe The options used to derive the key, specified using the
      * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
      * @return A PackageSealedMessage containing the sealed ciphertext, the derivation options
      * (in plaintext) needed to (re)derive the key to unseal the ciphertext, and the
      * unsealingInstructions (also in plaintext).
      */
-    sealWithInstructions(message: ByteArrayOrString, unsealingInstructions: string, seedString: string, derivationOptionsJson: string): PackagedSealedMessage;
+    sealWithInstructions(message: ByteArrayOrString, unsealingInstructions: string, seedString: string, recipe: string): PackagedSealedMessage;
     
     /**
      * Unseal a message that was previously sealed into a [[PackagedSealedMessage]] format:
@@ -496,7 +496,7 @@ interface StaticSealingAndUnsealing {
      * @param packagedSealedMessage The packaged message to unseal.
      * @param seedString The secret seed that was used to generate the keys used to seal
      * the message, and which can be used to re-derive the keys to unseal it, using
-     * the `keyDerivationOptionsJson` enclosed in the [[PackagedSealedMessage]].
+     * the `keyrecipe` enclosed in the [[PackagedSealedMessage]].
      * @return A byte array containing the unsealed message. If the sealed message
      * was a string, the caller will need to decode it from UTF8 format.
      * 
@@ -517,7 +517,7 @@ interface StaticSealingAndUnsealing {
      * @param jsonPackagedSealedMessage The packaged message to unseal in JSON format.
      * @param seedString The secret seed that was used to generate the keys used to seal
      * the message, and which can be used to re-derive the keys to unseal it, using
-     * the `keyDerivationOptionsJson` enclosed in the [[PackagedSealedMessage]].
+     * the `keyrecipe` enclosed in the [[PackagedSealedMessage]].
      * @return A byte array containing the unsealed message. If the sealed message
      * was a string, the caller will need to decode it from UTF8 format.
      * 
@@ -539,7 +539,7 @@ interface StaticSealingAndUnsealing {
      * @param binaryPackagedSealedMessage The packaged message to unseal in binary format.
      * @param seedString The secret seed that was used to generate the keys used to seal
      * the message, and which can be used to re-derive the keys to unseal it, using
-     * the `keyDerivationOptionsJson` enclosed in the [[PackagedSealedMessage]].
+     * the `keyrecipe` enclosed in the [[PackagedSealedMessage]].
      * @return A byte array containing the unsealed message. If the sealed message
      * was a string, the caller will need to decode it from UTF8 format.
      * 
@@ -561,12 +561,12 @@ export interface PackagedSealedMessageStatic extends
     /**
      * Construct a new PackagedSealedMessage from its three members. 
      */
-    new(ciphertext: ByteArray, derivationOptionsJson: string, unsealingInstructions: string): PackagedSealedMessage;
+    new(ciphertext: ByteArray, recipe: string, unsealingInstructions: string): PackagedSealedMessage;
 }
 
 
 /**
- * When a message is sealed, the ciphertext is packaged with the derivationOptionsJson
+ * When a message is sealed, the ciphertext is packaged with the recipe
  * used to derive the key needed to unseal the message, as well as any optional
  * unsealingInstructions the message was sealing with.
  *
@@ -596,7 +596,7 @@ export interface PackagedSealedMessageJson {
      * The derivation options used to derive the key used to seal the message, and
      * which can be used to re-derive the key needed to unseal it.
      */
-    derivationOptionsJson: string;
+    recipe: string;
     /**
      * Any unsealing instructions that parties able to unseal the message should be
      * aware of.  These are stored in plaintext and are meant to be readable by
@@ -618,7 +618,7 @@ export interface PasswordStatic extends DerivableFromSeed<PasswordFields, Passwo
      * 
      * @param seedString The secret seed, such as a password, DiceKey, or
      * key stored elsewhere.
-     * @param derivationOptionsJson Derivation options specified using the
+     * @param recipe Derivation options specified using the
      * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
      * 
      * @returns The derived object, which **you must delete manually** by
@@ -627,20 +627,20 @@ export interface PasswordStatic extends DerivableFromSeed<PasswordFields, Passwo
      * and are not automatically garbage collected by the JavaScript runtime.
      *
      */
-    deriveFromSeedAndWordList(seedString: string, derivationOptionsJson: string, wordListAsSingleString?: string): Password;
+    deriveFromSeedAndWordList(seedString: string, recipe: string, wordListAsSingleString?: string): Password;
 } {
 }
 
 /**
  * A password from another secret, in the form of a seed string, 
- * and set of derivation options specified ([[derivationOptionsJson]]) using the
+ * and set of derivation options specified ([[recipe]]) using the
  * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
  * 
  * Because the secret is derived using a one-way function,
  * its value does not reveal the secret seed used to derive it.
  * Rather, clients can use this secret knowing that, if lost,
  * it can be re-derived from the same seed and
- * [[derivationOptionsJson]] that were first used to derive it.
+ * [[recipe]] that were first used to derive it.
  *
  * The static methods of this class are documented in [[PasswordStatic]].
  * 
@@ -740,14 +740,14 @@ export interface SecretStatic extends DerivableFromSeed<SecretFields, Secret> {
 
 /**
  * A secret derived from another secret, in the form of a seed string, 
- * and set of derivation options specified ([[derivationOptionsJson]]) using the
+ * and set of derivation options specified ([[recipe]]) using the
  * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
  * 
  * Because the secret is derived using a one-way function,
  * its value does not reveal the secret seed used to derive it.
  * Rather, clients can use this secret knowing that, if lost,
  * it can be re-derived from the same seed and
- * [[derivationOptionsJson]] that were first used to derive it.
+ * [[recipe]] that were first used to derive it.
  *
  * The static methods of this class are documented in [[SecretStatic]].
  * 
@@ -760,13 +760,13 @@ export interface SecretStatic extends DerivableFromSeed<SecretFields, Secret> {
  * 
  * async function demo(
  *     mySeedString: string,
- *     myDerivationOptionsJson: string = ""
+ *     myrecipe: string = ""
  * ): Promise<Uint8Array> {
  *     // Ensure the module is loaded and compiled before we use it.
  *     const seededCryptoModule = await SeededCryptoModulePromise;
  *     // Derive the secret.
  *     const secret = seededCryptoModule.Secret.deriveFromSeed(
- *         mySeedString, myDerivationOptionsJson
+ *         mySeedString, myrecipe
  *     );
  *     // Extract the secret bytes from the [[Secret]] before deleting it.
  *     const {secretBytes} = secret;
@@ -861,7 +861,7 @@ export interface SignatureVerificationKeyJson extends DerivedSecretJson {
  * @category SigningKey
  */
 export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, SigningKey> {
-    generateSignature(message: ByteArrayOrString, seedString: string, derivationOptionsJson: string): Uint8Array;
+    generateSignature(message: ByteArrayOrString, seedString: string, recipe: string): Uint8Array;
 }
 
 /**
@@ -886,12 +886,12 @@ export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, Si
  * ```typescript
  * import {SeededCryptoModulePromise} from "seeded-crypto";
  * 
- * async function demo(mySeedString: string, myDerivationOptionsJson: string = "") {
+ * async function demo(mySeedString: string, myrecipe: string = "") {
  *   // Ensure the module is loaded and compiled before we use it.
  *   const seededCryptoModule = await SeededCryptoModulePromise;    
  *   // Get a key used to sign and the corresponding key used to verify signatures.
  *   const signingKey = seededCryptoModule.SigningKey.deriveFromSeed(
- *       mySeedString, myDerivationOptionsJson
+ *       mySeedString, myrecipe
  *   );
  *   const signatureVerificationKey = signingKey.getSignatureVerificationKey();
  *   // Sign a message
@@ -999,7 +999,7 @@ export interface SymmetricKeyStatic extends
  * So, you can use this symmetric-key to seal a message, throw the
  * key away, and re-generate the key when you need to unseal the
  * message so long as you still have the original seed and
- * derivationOptionsJson.
+ * recipe.
  *  
  * Sealing a message (_plaintext_) creates a _ciphertext which contains
  * the message but from which observers who do not have the UnsealingKey
@@ -1031,12 +1031,12 @@ export interface SymmetricKeyStatic extends
  * ```typescript
  * import {SeededCryptoModulePromise} from "seeded-crypto";
  * 
- * async function demo(mySeedString: string, myDerivationOptionsJson: string = "") {
+ * async function demo(mySeedString: string, myrecipe: string = "") {
  *    // Ensure the module is loaded and compiled before we use it.
  *    const seededCryptoModule = await SeededCryptoModulePromise;    
  *    // To get a sealing key, you first need to derive the corresponding unsealing key.
  *    const symmetricKey = seededCryptoModule.SymmetricKey.deriveFromSeed(
- *        mySeedString, myDerivationOptionsJson
+ *        mySeedString, myrecipe
  *    );
  *    // Seal a message
  *    const packagedSealedMessage = symmetricKey.seal("The poodle rides at midnight.");
@@ -1102,12 +1102,12 @@ export interface UnsealingKeyStatic extends
  * ```typescript
  * import {SeededCryptoModulePromise} from "seeded-crypto";
  * 
- * async function demo(mySeedString: string, myDerivationOptionsJson: string = "") {
+ * async function demo(mySeedString: string, myrecipe: string = "") {
  *     // Ensure the module is loaded and compiled before we use it.
  *     const seededCryptoModule = await SeededCryptoModulePromise;    
  *     // To get a sealing key, you first need to derive the corresponding unsealing key.
  *     const unsealingKey = seededCryptoModule.UnsealingKey.deriveFromSeed(
- *         mySeedString, myDerivationOptionsJson
+ *         mySeedString, myrecipe
  *     );
  *    const sealingKey = unsealingKey.getSealingKey();
  *    // Make sure to delete objects when you're done using them.
@@ -1151,8 +1151,8 @@ export interface UnsealingKeyJson extends DerivedSecretJson {
     unsealingKeyBytes: ByteArrayAsUrlSafeBase64String;
 }
 
-interface DerivationOptionsStatic {
-    derivePrimarySecret(seedString: string, derivationOptionsJson: string): Uint8Array;
+interface RecipeStatic {
+    derivePrimarySecret(seedString: string, recipe: string): Uint8Array;
 }
 
 
@@ -1161,7 +1161,7 @@ interface SeededCryptoModule extends EmscriptenModule {
     /**
      * @category SeededCryptoModule
      */
-    DerivationOptions: DerivationOptionsStatic;
+    Recipe: RecipeStatic;
     /**
      * @category SeededCryptoModule
      */
@@ -1210,7 +1210,7 @@ interface SeededCryptoModuleNotReallyAPromise {
  * To instantiate a derived secret or key, call the `deriveFromSeed` operation on the appropriate
  * member of this module. For example:
  * ```
- * const symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, derivationOptionsJson);
+ * const symmetricKey = module.SymmetricKey.deriveFromSeed(seedString, recipe);
  * ```
  * 
  * Or use the static constructors to restore serialized objects, or use

@@ -22,10 +22,10 @@
   .function("toCustomJson", &CLASSTYPE::toJson)
 
 #define AddIndirectlyDerivable(CLASSTYPE) \
-  .property<std::string>("derivationOptionsJson", *[] \
-  (const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; }) \
   .property<std::string>("recipe", *[] \
-  (const CLASSTYPE &derivable)->std::string{ return derivable.derivationOptionsJson; })
+  (const CLASSTYPE &derivable)->std::string{ return derivable.recipe; }) \
+  .property<std::string>("recipe", *[] \
+  (const CLASSTYPE &derivable)->std::string{ return derivable.recipe; })
 
 
 #define AddDirectlyDerivable(CLASSTYPE)  \
