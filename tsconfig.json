@@ -4,9 +4,9 @@
       "declaration": true,
       "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
       "module": "commonjs",
+      "target": "ES2020",
       "esModuleInterop": true,
       "allowSyntheticDefaultImports": true,
-      "target": "esnext",
       "noImplicitAny": true,
       "moduleResolution": "node",
       "rootDirs": ["src"],
@@ -25,5 +25,5 @@
       "outDir": "dist"
     },
     "include": ["src/**/*"],
-    "lib": ["node", "es6", "webworker"]
+    "lib": ["node", "es2020", "webworker"]
   }
