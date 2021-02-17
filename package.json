@@ -1,6 +1,6 @@
 {
   "name": "@dicekeys/seeded-crypto-js",
-  "version": "0.1.32",
+  "version": "0.2.01",
   "description": "DiceKeys Seeded Cryptography Library for JavaScript and TypeScript",
   "main": "dist/seeded-crypto.js",
   "types": "dist/seeded-crypto.d.ts",
@@ -33,9 +33,9 @@
     "@types/node": "^14.0.1",
     "copyfiles": "^2.2.0",
     "core-js": "^3.6.5",
-    "jest": "^26.0.1",
+    "jest": "^26.6.3",
     "nodemon": "^2.0.3",
-    "ts-jest": "^26.0.0",
+    "ts-jest": "^26.5.1",
     "ts-lint": "^4.5.1",
     "ts-node": "^8.10.0",
     "typescript": "^3.9.2"

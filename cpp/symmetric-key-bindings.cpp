@@ -19,13 +19,13 @@ EMSCRIPTEN_BINDINGS(SymmetricKey) {
     .function("toJsObject", *[](const SymmetricKey &symmetricKey)->emscripten::val{
       auto obj = emscripten::val::object();
       obj.set("keyBytes", toJsUint8Array(symmetricKey.keyBytes));
-      obj.set("derivationOptionsJson", symmetricKey.derivationOptionsJson);
+      obj.set("recipe", symmetricKey.recipe);
       return obj;
     })
     .class_function<SymmetricKey>("fromJsObject", *[](const emscripten::val &jsObj)->SymmetricKey{
       const SodiumBuffer keyBytes = sodiumBufferFromJsTypedNumericArray(jsObj["keyBytes"]);
-      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
-      return SymmetricKey(keyBytes, derivationOptionsJson);
+      const std::string recipe = jsObj["recipe"].as<std::string>();
+      return SymmetricKey(keyBytes, recipe);
     })
 
     //   sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;

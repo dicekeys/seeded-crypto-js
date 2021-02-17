@@ -28,14 +28,14 @@ EMSCRIPTEN_BINDINGS(UnsealingKey) {
       auto obj = emscripten::val::object();
       obj.set("unsealingKeyBytes", toJsUint8Array(unsealingKey.unsealingKeyBytes));
       obj.set("sealingKeyBytes", toJsUint8Array(unsealingKey.sealingKeyBytes));
-      obj.set("derivationOptionsJson", unsealingKey.derivationOptionsJson);
+      obj.set("recipe", unsealingKey.recipe);
       return obj;
     })
     .class_function<UnsealingKey>("fromJsObject", *[](const emscripten::val &jsObj)->UnsealingKey{
       const SodiumBuffer unsealingKeyBytes = sodiumBufferFromJsTypedNumericArray(jsObj["unsealingKeyBytes"]);
       const std::vector<unsigned char> sealingKeyBytes = byteVectorFromJsNumericArray(jsObj["sealingKeyBytes"]);
-      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
-      return UnsealingKey(unsealingKeyBytes, sealingKeyBytes, derivationOptionsJson);
+      const std::string recipe = jsObj["recipe"].as<std::string>();
+      return UnsealingKey(unsealingKeyBytes, sealingKeyBytes, recipe);
     })
 
     // static  unseal(packagedSealedMessage: PackagedSealedMessage, seedString: string): Uint8Array;

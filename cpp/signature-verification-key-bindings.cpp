@@ -20,19 +20,19 @@ EMSCRIPTEN_BINDINGS(SignatureVerificationKey) {
     .function("toJsObject", *[](const SignatureVerificationKey &signatureVerificationKey)->emscripten::val{
       auto obj = emscripten::val::object();
       obj.set("signatureVerificationKeyBytes", toJsUint8Array(signatureVerificationKey.signatureVerificationKeyBytes));
-      obj.set("derivationOptionsJson", signatureVerificationKey.derivationOptionsJson);
+      obj.set("recipe", signatureVerificationKey.recipe);
       return obj;
     })
     .class_function<SignatureVerificationKey>("fromJsObject", *[](const emscripten::val &jsObj)->SignatureVerificationKey{
       const std::vector<unsigned char> signatureVerificationKeyBytes = byteVectorFromJsNumericArray(jsObj["signatureVerificationKeyBytes"]);
-      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
-      return SignatureVerificationKey(signatureVerificationKeyBytes, derivationOptionsJson);
+      const std::string recipe = jsObj["recipe"].as<std::string>();
+      return SignatureVerificationKey(signatureVerificationKeyBytes, recipe);
     })    
     .class_function<SignatureVerificationKey>("deriveFromSeed", *[](
       const std::string &seedString,
-      const std::string& derivationOptionsJson
+      const std::string& recipe
     )->SignatureVerificationKey{
-      return SigningKey::deriveFromSeed(seedString,derivationOptionsJson).getSignatureVerificationKey();
+      return SigningKey::deriveFromSeed(seedString,recipe).getSignatureVerificationKey();
     })
     //   verify(message: BindableToString, signature: TypedByteArray): boolean;
     .function("verify", *[](const SignatureVerificationKey& signatureVerificationKey,

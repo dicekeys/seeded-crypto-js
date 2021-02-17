@@ -21,19 +21,19 @@ EMSCRIPTEN_BINDINGS(SealingKey) {
     .function("toJsObject", *[](const SealingKey &sealingKey)->emscripten::val{
       auto obj = emscripten::val::object();
       obj.set("sealingKeyBytes", toJsUint8Array(sealingKey.sealingKeyBytes));
-      obj.set("derivationOptionsJson", sealingKey.derivationOptionsJson);
+      obj.set("recipe", sealingKey.recipe);
       return obj;
     })
     .class_function<SealingKey>("fromJsObject", *[](const emscripten::val &jsObj)->SealingKey{
       const std::vector<unsigned char> sealingKeyBytes = byteVectorFromJsNumericArray(jsObj["sealingKeyBytes"]);
-      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
-      return SealingKey(sealingKeyBytes, derivationOptionsJson);
+      const std::string recipe = jsObj["recipe"].as<std::string>();
+      return SealingKey(sealingKeyBytes, recipe);
     })
     .class_function<SealingKey>("deriveFromSeed", *[](
       const std::string &seedString,
-      const std::string& derivationOptionsJson
+      const std::string& recipe
     )->SealingKey{
-      return UnsealingKey::deriveFromSeed(seedString,derivationOptionsJson).getSealingKey();
+      return UnsealingKey::deriveFromSeed(seedString,recipe).getSealingKey();
     })
 
     //   sealWithInstructions(message: BindableToString, unsealingInstructions: string): PackagedSealedMessage;

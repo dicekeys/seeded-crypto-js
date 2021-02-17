@@ -29,14 +29,14 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
       auto obj = emscripten::val::object();
       obj.set("signingKeyBytes", toJsUint8Array(signingKey.signingKeyBytes));
       obj.set("signatureVerificationKeyBytes", toJsUint8Array(((SigningKey&)signingKey).getSignatureVerificationKeyBytes()));
-      obj.set("derivationOptionsJson", signingKey.derivationOptionsJson);
+      obj.set("recipe", signingKey.recipe);
       return obj;
     })
     .class_function<SigningKey>("fromJsObject", *[](const emscripten::val &jsObj)->SigningKey{
       const SodiumBuffer signingKeyBytes = sodiumBufferFromJsTypedNumericArray(jsObj["signingKeyBytes"]);
       const std::vector<unsigned char> signatureVerificationKeyBytes = byteVectorFromJsNumericArray(jsObj["signatureVerificationKeyBytes"]);
-      const std::string derivationOptionsJson = jsObj["derivationOptionsJson"].as<std::string>();
-      return SigningKey(signingKeyBytes, signatureVerificationKeyBytes, derivationOptionsJson);
+      const std::string recipe = jsObj["recipe"].as<std::string>();
+      return SigningKey(signingKeyBytes, signatureVerificationKeyBytes, recipe);
     })
 
     //   getSignatureVerificationKey(): SignatureVerificationKey;
@@ -49,13 +49,13 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
       return toJsUint8Array(signingKey.generateSignature((const unsigned char*) message.data(), message.size()));
     })
 
-    //   generateSignature(message: BindableToString, seedString: string, derivationOptionsJson: string): Uint8Array;
+    //   generateSignature(message: BindableToString, seedString: string, recipe: string): Uint8Array;
     .class_function("generateSignature", *[](
         const std::string& message,
         const std::string& seedString,
-        const std::string& derivationOptionsJson){
+        const std::string& recipe){
         return toJsUint8Array(
-          SigningKey::deriveFromSeed(seedString, derivationOptionsJson)
+          SigningKey::deriveFromSeed(seedString, recipe)
             .generateSignature((const unsigned char*) message.data(), message.size())
         );
     })

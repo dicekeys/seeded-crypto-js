@@ -7,7 +7,7 @@ export interface PackagedSealedMessageFields {
    * The derivation options used to derive the key used to seal the message, and
    * which can be used to re-derive the key needed to unseal it.
    */
-  readonly derivationOptionsJson: string;
+  readonly recipe: string;
   /**
    * Any unsealing instructions that parties able to unseal the message should be
    * aware of.  These are stored in plaintext and are meant to be readable by
@@ -19,12 +19,13 @@ export interface PackagedSealedMessageFields {
 
 export interface DerivedSecretFields {
   /**
-   * The `derivationOptionsJson` passed as the second parameter to
+   * The `recipe` passed as the second parameter to
    * `deriveFromSeed()` when this object was first derived from a
    * a secret seed.  Uses
    * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
    */
   readonly derivationOptionsJson: string;    
+  readonly recipe: string;    
 }
 
 export interface PasswordFields extends DerivedSecretFields {
