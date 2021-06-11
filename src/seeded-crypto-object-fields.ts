@@ -60,6 +60,11 @@ export interface SignatureVerificationKeyFields extends DerivedSecretFields {
 export interface SigningKeyFields extends SignatureVerificationKeyFields {
   /**
    * The raw key bytes used to generate signatures.
+   * This is a lib-sodium 64-byte representation that includes both the seed
+   * and the public key so as to save the computation needed to re-derive
+   * the public key from the seed.
+   *
+
    */
   readonly signingKeyBytes: Uint8Array;
 }
