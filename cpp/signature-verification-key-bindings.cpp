@@ -44,6 +44,11 @@ EMSCRIPTEN_BINDINGS(SignatureVerificationKey) {
         byteVectorFromJsNumericArray(signature)
       );
     })
+
+    .function("toOpenSshPublicKey", *[](SignatureVerificationKey& signatureVerificationKey){
+      return signatureVerificationKey.toOpenSshPublicKey();
+    })
+
   ;
 }
 

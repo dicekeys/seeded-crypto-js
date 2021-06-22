@@ -18,7 +18,7 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
         return toJsUint8Array(signingKey.signingKeyBytes);
     })
 
-    //   readonly singatureVerificationKeyBytes: Uint8Array;
+    //   readonly signatureVerificationKeyBytes: Uint8Array;
     .property<emscripten::val>("signatureVerificationKeyBytes",
       [](const SigningKey &signingKey)->emscripten::val{
         return toJsUint8Array(((SigningKey&)signingKey).getSignatureVerificationKeyBytes());
@@ -34,9 +34,8 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
     })
     .class_function<SigningKey>("fromJsObject", *[](const emscripten::val &jsObj)->SigningKey{
       const SodiumBuffer signingKeyBytes = sodiumBufferFromJsTypedNumericArray(jsObj["signingKeyBytes"]);
-      const std::vector<unsigned char> signatureVerificationKeyBytes = byteVectorFromJsNumericArray(jsObj["signatureVerificationKeyBytes"]);
       const std::string recipe = jsObj["recipe"].as<std::string>();
-      return SigningKey(signingKeyBytes, signatureVerificationKeyBytes, recipe);
+      return SigningKey(signingKeyBytes, recipe);
     })
 
     //   getSignatureVerificationKey(): SignatureVerificationKey;
@@ -59,6 +58,18 @@ EMSCRIPTEN_BINDINGS(SigningKey) {
             .generateSignature((const unsigned char*) message.data(), message.size())
         );
     })
+
+    .function("toOpenSshPemPrivateKey", *[](SigningKey& signingKey, const std::string& comment){
+      return signingKey.toOpenSshPemPrivateKey(comment);
+    })
+    .function("toOpenSshPublicKey", *[](SigningKey& signingKey){
+      return signingKey.toOpenSshPublicKey();
+    })
+    .function("toOpenPgpPemFormatSecretKey", *[](SigningKey& signingKey, const std::string& userIdPacketContent, unsigned int timestamp){
+      return signingKey.toOpenPgpPemFormatSecretKey(userIdPacketContent, timestamp);
+    })
+
+
   ;
 }
 
