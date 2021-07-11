@@ -50,6 +50,8 @@ target_compile_options(
     "SHELL:-s ASSERTIONS=2"
     "SHELL:-s DISABLE_EXCEPTION_CATCHING=0"
     "SHELL:-s EXCEPTION_DEBUG=1"
+# To resolve issue #9, removing evals from compiled code
+    "SHELL:-s NO_DYNAMIC_EXECUTION=1"
 #    --memory-init-file 0
     -O3
     -g4
