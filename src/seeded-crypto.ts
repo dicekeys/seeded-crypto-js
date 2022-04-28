@@ -496,7 +496,7 @@ interface StaticSealingAndUnsealing {
      * @param packagedSealedMessage The packaged message to unseal.
      * @param seedString The secret seed that was used to generate the keys used to seal
      * the message, and which can be used to re-derive the keys to unseal it, using
-     * the `keyrecipe` enclosed in the [[PackagedSealedMessage]].
+     * the `recipe` enclosed in the [[PackagedSealedMessage]].
      * @return A byte array containing the unsealed message. If the sealed message
      * was a string, the caller will need to decode it from UTF8 format.
      * 
@@ -517,7 +517,7 @@ interface StaticSealingAndUnsealing {
      * @param jsonPackagedSealedMessage The packaged message to unseal in JSON format.
      * @param seedString The secret seed that was used to generate the keys used to seal
      * the message, and which can be used to re-derive the keys to unseal it, using
-     * the `keyrecipe` enclosed in the [[PackagedSealedMessage]].
+     * the `recipe` enclosed in the [[PackagedSealedMessage]].
      * @return A byte array containing the unsealed message. If the sealed message
      * was a string, the caller will need to decode it from UTF8 format.
      * 
@@ -539,7 +539,7 @@ interface StaticSealingAndUnsealing {
      * @param binaryPackagedSealedMessage The packaged message to unseal in binary format.
      * @param seedString The secret seed that was used to generate the keys used to seal
      * the message, and which can be used to re-derive the keys to unseal it, using
-     * the `keyrecipe` enclosed in the [[PackagedSealedMessage]].
+     * the `recipe` enclosed in the [[PackagedSealedMessage]].
      * @return A byte array containing the unsealed message. If the sealed message
      * was a string, the caller will need to decode it from UTF8 format.
      * 
@@ -840,6 +840,12 @@ export interface SignatureVerificationKey extends
      * by the [[SigningKey]] that is paired with this [[SignatureVerificationKey]].
      */
     verify(message: ByteArrayOrString, signature: ByteArray): boolean;
+
+    /**
+     * Encoding the signature-verification key into an Open-SSH compatible
+     * string format (not PEM).
+     */
+     toOpenSshPublicKey(): string;
 }
 
 /**
@@ -849,7 +855,7 @@ export interface SignatureVerificationKey extends
  */
 export interface SignatureVerificationKeyJson extends DerivedSecretJson {
     /**
-     * The raw key bytes used to verify signatures,
+     * The raw key bytes used to verify signatures.
      * encoded to URL-safe Base64 per [RFC 4648 Section 5](https://tools.ietf.org/html/rfc4648#section-5).
      */
     signatureVerificationKeyBytes: ByteArrayAsUrlSafeBase64String;
@@ -919,16 +925,10 @@ export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, Si
      * The raw key bytes used to generate signatures.
      */
     readonly signingKeyBytes: Uint8Array;
-    /**
-     * The raw key bytes used to verify signatures.
-     */
-    readonly signatureVerificationKeyBytes: Uint8Array;
+
     /**
      * Serialize this object into JSON format using custom indentation.
      * 
-     * @param minimizeSizeByRemovingTheSignatureVerificationKeyBytesWhichCanBeRegeneratedLater If true,
-     * save space by excluding the [[signatureVerificationKeyBytes]] from JSON format since they can
-     * be re-derived from the [[signingKeyBytes]].
      * @param indent The number of characters to indent
      * @param indentCharCode The unicode char code to indent, which you
      * can generate by creating a one-character string followed by
@@ -937,7 +937,6 @@ export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, Si
      */
 
     toCustomJson(
-        minimizeSizeByRemovingTheSignatureVerificationKeyBytesWhichCanBeRegeneratedLater: boolean,
         indent: number,
         indentCharCode: number
     ): string;
@@ -954,6 +953,28 @@ export interface SigningKeyStatic extends DerivableFromSeed<SigningKeyFields, Si
      * @param message The message to generate a signature for.
      */
     generateSignature(message: ByteArrayOrString): Uint8Array;
+
+    /**
+     * Encoding the signing key into an Open-SSH compatible
+     * PEM block format.
+     */
+     toOpenSshPemPrivateKey(comment: string): string;
+
+    /**
+     * Encoding the signature-verification key into an Open-SSH compatible
+     * string format (not PEM).
+     */
+    toOpenSshPublicKey(): string;
+
+    /**
+     * Encode the signing key into PGP PEM format.
+     * 
+     * @param userIdPacketContent An arbitrary string representing the user, for
+     * which the common convention is "username <email>" but the standard
+     * allows any string.
+     * @param timestamp Seconds since Jan 1. 1970 UTC.
+     */
+    toOpenPgpPemFormatSecretKey(userIdPacketContent: string, timestamp: number): string;
 }
 
 /**
@@ -967,19 +988,6 @@ export interface SigningKeyJson extends DerivedSecretJson {
      * encoded to URL-safe Base64 per [RFC 4648 Section 5](https://tools.ietf.org/html/rfc4648#section-5).
      */
     signingKeyBytes: ByteArrayAsUrlSafeBase64String;
-    /**
-     * The raw key bytes used to verify signatures,
-     * encoded to URL-safe Base64 per [RFC 4648 Section 5](https://tools.ietf.org/html/rfc4648#section-5).
-     * 
-     * This field is optional because, if it's not provided,
-     * it can be re-derived from the [[signingKeyBytes]] when the
-     * object is reconstituted.  (It does so on an as-needed basis,
-     * so if the field is never used, we save both on storage by
-     * not including this field and on computation if we never
-     * need to re-derive it.)
-     */
-
-    signatureVerificationKeyBytes?: ByteArrayAsUrlSafeBase64String;
 }
 
 /**
